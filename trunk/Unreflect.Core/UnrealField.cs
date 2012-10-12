@@ -32,6 +32,7 @@ namespace Unreflect.Core
         public UnrealClass Class { get; internal set; }
         public int Offset { get; internal set; }
         public int Size { get; internal set; }
+        public int ArrayCount { get; internal set; }
 
         internal virtual object Read(Engine engine, IntPtr objectAddress)
         {

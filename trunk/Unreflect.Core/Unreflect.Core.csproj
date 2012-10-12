@@ -57,7 +57,7 @@
     <Compile Include="UnrealFields\FloatField.cs" />
     <Compile Include="UnrealFields\IntField.cs" />
     <Compile Include="UnrealFields\NameField.cs" />
-    <Compile Include="UnrealFields\PrimitiveField.cs" />
+    <Compile Include="UnrealFields\DummyField.cs" />
     <Compile Include="UnrealFields\ObjectField.cs" />
     <Compile Include="UnrealFields\StrField.cs" />
     <Compile Include="UnrealFields\StructField.cs" />
