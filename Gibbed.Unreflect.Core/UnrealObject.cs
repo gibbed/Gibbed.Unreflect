@@ -51,6 +51,11 @@ namespace Gibbed.Unreflect.Core
             return this._Shim.Path;
         }
 
+        public UnrealClass GetClass()
+        {
+            return this._Shim.Class;
+        }
+
         internal UnrealObject(UnrealObjectShim shim)
         {
             if (shim == null)
