@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Unreflect.Core
+namespace Gibbed.Unreflect.Core
 {
     internal abstract class UnrealField
     {

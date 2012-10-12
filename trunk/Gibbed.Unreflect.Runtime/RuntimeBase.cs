@@ -27,7 +27,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Unreflect.Runtime
+namespace Gibbed.Unreflect.Runtime
 {
     public abstract class RuntimeBase : IDisposable
     {

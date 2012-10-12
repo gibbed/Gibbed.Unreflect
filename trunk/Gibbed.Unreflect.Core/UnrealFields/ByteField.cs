@@ -22,9 +22,9 @@
 
 using System;
 
-namespace Unreflect.Core.UnrealFields
+namespace Gibbed.Unreflect.Core.UnrealFields
 {
-    internal class IntField : UnrealField
+    internal class ByteField : UnrealField
     {
         internal override object Read(Engine engine, IntPtr objectAddress)
         {
@@ -33,12 +33,12 @@ namespace Unreflect.Core.UnrealFields
                 throw new NotSupportedException();
             }
 
-            if (this.Size != 4)
+            if (this.Size != 1)
             {
                 throw new InvalidOperationException();
             }
 
-            return engine.Runtime.ReadValueS32(objectAddress + this.Offset);
+            return engine.Runtime.ReadValueU8(objectAddress + this.Offset);
         }
     }
 }

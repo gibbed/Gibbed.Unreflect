@@ -20,9 +20,26 @@
  *    distribution.
  */
 
-namespace Unreflect.Core.UnrealFields
+using System;
+
+namespace Gibbed.Unreflect.Core.UnrealFields
 {
-    internal class DummyField : UnrealField
+    internal class ClassField : UnrealField
     {
+        internal override object Read(Engine engine, IntPtr objectAddress)
+        {
+            var classAddress = engine.ReadPointer(objectAddress + this.Offset);
+            if (classAddress == IntPtr.Zero)
+            {
+                return (UnrealObject)null;
+            }
+
+            var uclass = engine.GetClass(classAddress);
+            if (uclass == null)
+            {
+                throw new InvalidOperationException();
+            }
+            return uclass;
+        }
     }
 }

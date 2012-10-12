@@ -23,7 +23,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Unreflect.Runtime
+namespace Gibbed.Unreflect.Runtime
 {
     internal static class Win32
     {

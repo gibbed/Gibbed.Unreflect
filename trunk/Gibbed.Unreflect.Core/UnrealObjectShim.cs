@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
-namespace Unreflect.Core
+namespace Gibbed.Unreflect.Core
 {
     internal class UnrealObjectShim
     {

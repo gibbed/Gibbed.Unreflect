@@ -25,7 +25,7 @@ using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Unreflect.Core
+namespace Gibbed.Unreflect.Core
 {
     [JsonObject(MemberSerialization.OptIn)]
     public struct Configuration : ICloneable
