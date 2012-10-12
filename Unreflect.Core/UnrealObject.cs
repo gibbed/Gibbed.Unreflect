@@ -30,6 +30,27 @@ namespace Unreflect.Core
     {
         private readonly UnrealObjectShim _Shim;
 
+        public bool IsA(UnrealClass uclass)
+        {
+            if (this._Shim.Class == null)
+            {
+                return false;
+            }
+
+            return this._Shim.Class == uclass ||
+                   this._Shim.Class.IsA(uclass) == true;
+        }
+
+        public string GetName()
+        {
+            return this._Shim.Name;
+        }
+
+        public string GetPath()
+        {
+            return this._Shim.Path;
+        }
+
         internal UnrealObject(UnrealObjectShim shim)
         {
             if (shim == null)

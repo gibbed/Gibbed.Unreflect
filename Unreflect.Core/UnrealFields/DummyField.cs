@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Unreflect.Core.UnrealFields
 {
-    internal class PrimitiveField : UnrealField
+    internal class DummyField : UnrealField
     {
     }
 }

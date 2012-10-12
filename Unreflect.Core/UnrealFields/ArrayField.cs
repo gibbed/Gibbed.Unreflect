@@ -11,6 +11,11 @@ namespace Unreflect.Core.UnrealFields
 
         internal override object Read(Engine engine, IntPtr objectAddress)
         {
+            if (this.ArrayCount != 1)
+            {
+                throw new NotSupportedException();
+            }
+
             if (this.Inner is StructField)
             {
                 var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);

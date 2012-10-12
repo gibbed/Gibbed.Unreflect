@@ -44,7 +44,7 @@ namespace Unreflect.Core
         private readonly Dictionary<IntPtr, UnrealField> _CachedFields = new Dictionary<IntPtr, UnrealField>();
         private readonly Dictionary<IntPtr, string> _CachedPaths = new Dictionary<IntPtr, string>();
 
-        public IEnumerable<UnrealObject> GlobalObjects
+        public IEnumerable<UnrealObject> Objects
         {
             get { return this._ObjectShims.Values.Select(s => s.Object); }
         }
@@ -62,6 +62,21 @@ namespace Unreflect.Core
                 return null;
             }
             return shim.Object;
+        }
+
+        public UnrealClass GetClass(IntPtr address)
+        {
+            return this.ReadClass(address);
+        }
+
+        public UnrealClass GetClass(string path)
+        {
+            var uclass = this._CachedClasses.Values.SingleOrDefault(o => o.Path == path);
+            if (uclass == null)
+            {
+                return null;
+            }
+            return uclass;
         }
 
         public Engine(Configuration configuration, RuntimeBase runtime)
@@ -296,7 +311,7 @@ namespace Unreflect.Core
                 case "Core.DelegateProperty":
                 case "Core.InterfaceProperty":
                 {
-                    field = new UnrealFields.PrimitiveField();
+                    field = new UnrealFields.DummyField();
                     this._CachedFields.Add(address, field);
                     break;
                 }
@@ -311,8 +326,9 @@ namespace Unreflect.Core
             field.VfTableObject = this.ReadPointer(address + 0);
             field.Name = this.ReadName(address + this.Configuration.ObjectNameOffset);
             field.Class = uclass;
-            field.Offset = this.Runtime.ReadValueS32(address + 0x60);
+            field.ArrayCount = this.Runtime.ReadValueS32(address + 0x40);
             field.Size = this.Runtime.ReadValueS32(address + 0x44);
+            field.Offset = this.Runtime.ReadValueS32(address + 0x60);
             return field;
         }
 

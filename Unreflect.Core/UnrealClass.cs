@@ -38,6 +38,17 @@ namespace Unreflect.Core
         {
         }
 
+        public bool IsA(UnrealClass uclass)
+        {
+            if (this.Class == null)
+            {
+                return false;
+            }
+
+            return this.Class == uclass ||
+                   this.Class.IsA(uclass) == true;
+        }
+
         public override string ToString()
         {
             return this.Path;
