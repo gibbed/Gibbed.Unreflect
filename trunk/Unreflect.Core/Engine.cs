@@ -376,7 +376,8 @@ namespace Unreflect.Core
             var items = new string[array.Count];
             for (var o = 0; o < array.Count; o++)
             {
-                items[o] = this.ReadString((UnrealNatives.String)Marshal.PtrToStructure(current, typeof(UnrealNatives.String)));
+                items[o] =
+                    this.ReadString((UnrealNatives.String)Marshal.PtrToStructure(current, typeof(UnrealNatives.String)));
                 current += 12;
             }
             handle.Free();
