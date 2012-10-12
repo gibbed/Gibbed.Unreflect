@@ -35,12 +35,18 @@ namespace Unreflect.Core.UnrealFields
                 }
                 return items;
             }
-            else if (this.Inner is ObjectField)
+
+            if (this.Inner is ObjectField)
             {
                 var array = engine.ReadPointerArray(objectAddress + this.Offset);
 
                 return array.Select(i =>
                 {
+                    if (i == IntPtr.Zero)
+                    {
+                        return null;
+                    }
+
                     var obj = engine.GetObject(i);
                     if (obj == null)
                     {
@@ -49,10 +55,13 @@ namespace Unreflect.Core.UnrealFields
                     return obj;
                 }).ToArray();
             }
-            else
+
+            if (this.Inner is StrField)
             {
-                throw new NotImplementedException();
+                return engine.ReadStringArray(objectAddress + this.Offset);
             }
+
+            throw new NotSupportedException();
         }
     }
 }

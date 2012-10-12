@@ -110,6 +110,11 @@ namespace Unreflect.Core
             }
 
             var str = this.Runtime.ReadStructure<UnrealNatives.String>(address);
+            return this.ReadString(str);
+        }
+
+        internal string ReadString(UnrealNatives.String str)
+        {
             return this.Runtime.ReadString(str.Data, str.Length, Encoding.Unicode);
         }
 
@@ -354,6 +359,28 @@ namespace Unreflect.Core
             this.WriteStructureArray(address,
                                      items.Select(i => new UnrealNatives.Pointer(i))
                                          .ToArray());
+        }
+
+        internal string[] ReadStringArray(IntPtr address)
+        {
+            var array = this.Runtime.ReadStructure<UnrealNatives.Array>(address);
+            if (array.Data == IntPtr.Zero)
+            {
+                return new string[0];
+            }
+
+            var structureSize = 12;
+            var buffer = this.Runtime.ReadBytes(array.Data, array.Count * structureSize);
+            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            var current = handle.AddrOfPinnedObject();
+            var items = new string[array.Count];
+            for (var o = 0; o < array.Count; o++)
+            {
+                items[o] = this.ReadString((UnrealNatives.String)Marshal.PtrToStructure(current, typeof(UnrealNatives.String)));
+                current += 12;
+            }
+            handle.Free();
+            return items;
         }
 
         internal TStructure[] ReadStructureArray<TStructure>(IntPtr address)

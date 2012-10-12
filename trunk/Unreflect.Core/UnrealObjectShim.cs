@@ -77,11 +77,11 @@ namespace Unreflect.Core
                 result = string.Format("***NOT IMPLEMENTED {0}***", field.Class.Name);
                 return true;
             }
-            catch (Exception e)
+            /*catch (Exception e)
             {
                 result = "*** EXCEPTION: " + e.Message + "***";
                 return true;
-            }
+            }*/
 
             this._FieldCache.Add(binder.Name, result);
             return true;
