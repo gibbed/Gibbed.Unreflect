@@ -20,25 +20,9 @@
  *    distribution.
  */
 
-using System;
-
-namespace Unreflect.Core.UnrealFields
+namespace Gibbed.Unreflect.Core.UnrealFields
 {
-    internal class ByteField : UnrealField
+    internal class DummyField : UnrealField
     {
-        internal override object Read(Engine engine, IntPtr objectAddress)
-        {
-            if (this.ArrayCount != 1)
-            {
-                throw new NotSupportedException();
-            }
-
-            if (this.Size != 1)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return engine.Runtime.ReadValueU8(objectAddress + this.Offset);
-        }
     }
 }

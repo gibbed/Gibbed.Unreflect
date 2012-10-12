@@ -22,36 +22,36 @@
 
 using System;
 
-namespace Unreflect.Core
+namespace Gibbed.Unreflect.Core.UnrealFields
 {
-    public class UnrealClass
+    internal class NameField : UnrealField
     {
-        public IntPtr Address { get; internal set; }
-        public IntPtr VfTableObject { get; internal set; }
-        public string Name { get; internal set; }
-        public string Path { get; internal set; }
-        public IntPtr Outer { get; internal set; }
-        public UnrealClass Class { get; internal set; }
-        internal UnrealField[] Fields { get; set; }
-
-        internal UnrealClass()
+        internal override object Read(Engine engine, IntPtr objectAddress)
         {
-        }
-
-        public bool IsA(UnrealClass uclass)
-        {
-            if (this.Class == null)
+            if (this.Size != 8)
             {
-                return false;
+                throw new InvalidOperationException();
             }
 
-            return this.Class == uclass ||
-                   this.Class.IsA(uclass) == true;
-        }
+            var fieldAddress = objectAddress + this.Offset;
 
-        public override string ToString()
-        {
-            return this.Path;
+            if (this.ArrayCount != 1)
+            {
+                var items = new string[this.ArrayCount];
+                for (int o = 0; o < this.ArrayCount; o++)
+                {
+                    items[o] = engine.ReadName(fieldAddress);
+                    fieldAddress += this.Size;
+                }
+                return items;
+            }
+
+            if (this.ArrayCount == 0)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return engine.ReadName(fieldAddress);
         }
     }
 }

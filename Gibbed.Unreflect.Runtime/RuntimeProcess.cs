@@ -26,7 +26,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Unreflect.Runtime
+namespace Gibbed.Unreflect.Runtime
 {
     public class RuntimeProcess : RuntimeBase
     {

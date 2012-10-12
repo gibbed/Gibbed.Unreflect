@@ -22,23 +22,36 @@
 
 using System;
 
-namespace Unreflect.Core.UnrealFields
+namespace Gibbed.Unreflect.Core
 {
-    internal class FloatField : UnrealField
+    public class UnrealClass
     {
-        internal override object Read(Engine engine, IntPtr objectAddress)
+        public IntPtr Address { get; internal set; }
+        public IntPtr VfTableObject { get; internal set; }
+        public string Name { get; internal set; }
+        public string Path { get; internal set; }
+        public IntPtr Outer { get; internal set; }
+        public UnrealClass Class { get; internal set; }
+        internal UnrealField[] Fields { get; set; }
+
+        internal UnrealClass()
         {
-            if (this.ArrayCount != 1)
+        }
+
+        public bool IsA(UnrealClass uclass)
+        {
+            if (this.Class == null)
             {
-                throw new NotSupportedException();
+                return false;
             }
 
-            if (this.Size != 4)
-            {
-                throw new InvalidOperationException();
-            }
+            return this.Class == uclass ||
+                   this.Class.IsA(uclass) == true;
+        }
 
-            return engine.Runtime.ReadValueF32(objectAddress + this.Offset);
+        public override string ToString()
+        {
+            return this.Path;
         }
     }
 }

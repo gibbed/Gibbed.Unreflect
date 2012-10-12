@@ -21,37 +21,43 @@
  */
 
 using System;
+using System.Runtime.InteropServices;
 
-namespace Unreflect.Core.UnrealFields
+namespace Gibbed.Unreflect.Core
 {
-    internal class NameField : UnrealField
+    internal static class UnrealNatives
     {
-        internal override object Read(Engine engine, IntPtr objectAddress)
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Array
         {
-            if (this.Size != 8)
+            public IntPtr Data;
+            public int Count;
+            public int Allocated;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Pointer
+        {
+            public IntPtr Value;
+
+            public Pointer(IntPtr value)
             {
-                throw new InvalidOperationException();
+                this.Value = value;
             }
+        }
 
-            var fieldAddress = objectAddress + this.Offset;
+        [StructLayout(LayoutKind.Sequential)]
+        public struct String
+        {
+            public IntPtr Data;
+            public int Length;
+        }
 
-            if (this.ArrayCount != 1)
-            {
-                var items = new string[this.ArrayCount];
-                for (int o = 0; o < this.ArrayCount; o++)
-                {
-                    items[o] = engine.ReadName(fieldAddress);
-                    fieldAddress += this.Size;
-                }
-                return items;
-            }
-
-            if (this.ArrayCount == 0)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return engine.ReadName(fieldAddress);
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Name
+        {
+            public int Id;
+            public int Index;
         }
     }
 }

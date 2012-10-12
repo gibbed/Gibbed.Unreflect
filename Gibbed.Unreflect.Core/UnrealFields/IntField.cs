@@ -21,43 +21,24 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
 
-namespace Unreflect.Core
+namespace Gibbed.Unreflect.Core.UnrealFields
 {
-    internal static class UnrealNatives
+    internal class IntField : UnrealField
     {
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Array
+        internal override object Read(Engine engine, IntPtr objectAddress)
         {
-            public IntPtr Data;
-            public int Count;
-            public int Allocated;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Pointer
-        {
-            public IntPtr Value;
-
-            public Pointer(IntPtr value)
+            if (this.ArrayCount != 1)
             {
-                this.Value = value;
+                throw new NotSupportedException();
             }
-        }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct String
-        {
-            public IntPtr Data;
-            public int Length;
-        }
+            if (this.Size != 4)
+            {
+                throw new InvalidOperationException();
+            }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Name
-        {
-            public int Id;
-            public int Index;
+            return engine.Runtime.ReadValueS32(objectAddress + this.Offset);
         }
     }
 }

@@ -23,7 +23,7 @@
 using System;
 using System.Linq;
 
-namespace Unreflect.Core.UnrealFields
+namespace Gibbed.Unreflect.Core.UnrealFields
 {
     internal class ArrayField : UnrealField
     {

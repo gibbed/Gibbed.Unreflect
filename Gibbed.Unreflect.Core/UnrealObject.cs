@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace Unreflect.Core
+namespace Gibbed.Unreflect.Core
 {
     public class UnrealObject : DynamicObject
     {

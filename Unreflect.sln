@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unreflect.Core", "Unreflect.Core\Unreflect.Core.csproj", "{5CB232F6-6E10-4D06-83B6-8238895ED36F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gibbed.Unreflect.Core", "Gibbed.Unreflect.Core\Gibbed.Unreflect.Core.csproj", "{5CB232F6-6E10-4D06-83B6-8238895ED36F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unreflect.Runtime", "Unreflect.Runtime\Unreflect.Runtime.csproj", "{78358FEB-E627-490E-8701-3C5DBE2D72FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gibbed.Unreflect.Runtime", "Gibbed.Unreflect.Runtime\Gibbed.Unreflect.Runtime.csproj", "{78358FEB-E627-490E-8701-3C5DBE2D72FA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{25F48DF5-22ED-4247-907E-B33C9BB14141}"
 	ProjectSection(SolutionItems) = preProject

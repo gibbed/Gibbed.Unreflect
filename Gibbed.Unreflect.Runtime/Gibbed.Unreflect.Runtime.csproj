@@ -8,8 +8,8 @@
     <ProjectGuid>{78358FEB-E627-490E-8701-3C5DBE2D72FA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Unreflect.Runtime</RootNamespace>
-    <AssemblyName>Unreflect.Runtime</AssemblyName>
+    <RootNamespace>Gibbed.Unreflect.Runtime</RootNamespace>
+    <AssemblyName>Gibbed.Unreflect.Runtime</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -8,8 +8,8 @@
     <ProjectGuid>{5CB232F6-6E10-4D06-83B6-8238895ED36F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Unreflect.Core</RootNamespace>
-    <AssemblyName>Unreflect.Core</AssemblyName>
+    <RootNamespace>Gibbed.Unreflect.Core</RootNamespace>
+    <AssemblyName>Gibbed.Unreflect.Core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -66,9 +66,9 @@
     <Compile Include="UnrealObjectShim.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Unreflect.Runtime\Unreflect.Runtime.csproj">
+    <ProjectReference Include="..\Gibbed.Unreflect.Runtime\Gibbed.Unreflect.Runtime.csproj">
       <Project>{78358FEB-E627-490E-8701-3C5DBE2D72FA}</Project>
-      <Name>Unreflect.Runtime</Name>
+      <Name>Gibbed.Unreflect.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

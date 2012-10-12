@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Unreflect.Core.UnrealFields
+namespace Gibbed.Unreflect.Core.UnrealFields
 {
     internal class BoolField : UnrealField
     {
