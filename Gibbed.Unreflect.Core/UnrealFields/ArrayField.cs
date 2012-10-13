@@ -76,6 +76,26 @@ namespace Gibbed.Unreflect.Core.UnrealFields
                 }).ToArray();
             }
 
+            if (this.Inner is ClassField)
+            {
+                var array = engine.ReadPointerArray(objectAddress + this.Offset);
+
+                return array.Select(i =>
+                {
+                    if (i == IntPtr.Zero)
+                    {
+                        return null;
+                    }
+
+                    var obj = engine.GetClass(i);
+                    if (obj == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+                    return obj;
+                }).ToArray();
+            }
+
             if (this.Inner is StrField)
             {
                 return engine.ReadStringArray(objectAddress + this.Offset);
