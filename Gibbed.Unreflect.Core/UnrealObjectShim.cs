@@ -87,6 +87,18 @@ namespace Gibbed.Unreflect.Core
             return true;
         }
 
+        public bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            var field = this.Class.Fields.SingleOrDefault(f => f.Name == binder.Name);
+            if (field == null)
+            {
+                return false;
+            }
+
+            field.Write(this._Engine, this.Address, value);
+            return true;
+        }
+
         public override string ToString()
         {
             return this.Path;
