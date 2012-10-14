@@ -36,6 +36,17 @@ namespace Gibbed.Unreflect.Core.UnrealFields
                 throw new NotSupportedException();
             }
 
+            if (this.Inner is ByteField)
+            {
+                var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);
+                if (array.Data == IntPtr.Zero)
+                {
+                    return new byte[0];
+                }
+
+                return engine.Runtime.ReadBytes(array.Data, array.Count);
+            }
+
             if (this.Inner is StructField)
             {
                 var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);
@@ -99,6 +110,11 @@ namespace Gibbed.Unreflect.Core.UnrealFields
             if (this.Inner is StrField)
             {
                 return engine.ReadStringArray(objectAddress + this.Offset);
+            }
+
+            if (this.Inner is NameField)
+            {
+                return engine.ReadNameArray(objectAddress + this.Offset);
             }
 
             throw new NotSupportedException();

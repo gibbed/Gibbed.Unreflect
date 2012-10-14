@@ -118,15 +118,8 @@ namespace Gibbed.Unreflect.Core
             return this.Runtime.ReadString(str.Data, str.Length, Encoding.Unicode);
         }
 
-        internal string ReadName(IntPtr address)
+        internal string ReadName(UnrealNatives.Name name)
         {
-            if (address == IntPtr.Zero)
-            {
-                throw new ArgumentNullException("address");
-            }
-
-            var name = this.Runtime.ReadStructure<UnrealNatives.Name>(address);
-
             string value;
 
             if (this._CachedNames.ContainsKey(name.Id) == true)
@@ -146,6 +139,16 @@ namespace Gibbed.Unreflect.Core
             }
 
             return value;
+        }
+
+        internal string ReadName(IntPtr address)
+        {
+            if (address == IntPtr.Zero)
+            {
+                throw new ArgumentNullException("address");
+            }
+
+            return this.ReadName(this.Runtime.ReadStructure<UnrealNatives.Name>(address));
         }
 
         internal string ReadPath(IntPtr address)
@@ -382,7 +385,30 @@ namespace Gibbed.Unreflect.Core
             {
                 items[o] =
                     this.ReadString((UnrealNatives.String)Marshal.PtrToStructure(current, typeof(UnrealNatives.String)));
-                current += 12;
+                current += structureSize;
+            }
+            handle.Free();
+            return items;
+        }
+
+        internal string[] ReadNameArray(IntPtr address)
+        {
+            var array = this.Runtime.ReadStructure<UnrealNatives.Array>(address);
+            if (array.Data == IntPtr.Zero)
+            {
+                return new string[0];
+            }
+
+            var structureSize = 8;
+            var buffer = this.Runtime.ReadBytes(array.Data, array.Count * structureSize);
+            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            var current = handle.AddrOfPinnedObject();
+            var items = new string[array.Count];
+            for (var o = 0; o < array.Count; o++)
+            {
+                items[o] =
+                    this.ReadName((UnrealNatives.Name)Marshal.PtrToStructure(current, typeof(UnrealNatives.String)));
+                current += structureSize;
             }
             handle.Free();
             return items;
