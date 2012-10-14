@@ -242,6 +242,7 @@ namespace Gibbed.Unreflect.Core
                     var objectField = new UnrealFields.ObjectField();
                     field = objectField;
                     this._CachedFields.Add(address, field);
+                    // TODO: move offset to config value
                     objectField.PropertyClass = this.ReadClass(this.ReadPointer(address + 0x80));
                     break;
                 }
@@ -251,6 +252,7 @@ namespace Gibbed.Unreflect.Core
                     var structField = new UnrealFields.StructField();
                     field = structField;
                     this._CachedFields.Add(address, field);
+                    // TODO: move offset to config value
                     structField.Structure = this.ReadClass(this.ReadPointer(address + 0x80));
                     break;
                 }
@@ -260,6 +262,7 @@ namespace Gibbed.Unreflect.Core
                     var arrayField = new UnrealFields.ArrayField();
                     field = arrayField;
                     this._CachedFields.Add(address, field);
+                    // TODO: move offset to config value
                     arrayField.Inner = this.ReadField(this.ReadPointer(address + 0x80));
                     break;
                 }
@@ -269,6 +272,7 @@ namespace Gibbed.Unreflect.Core
                     var boolField = new UnrealFields.BoolField();
                     field = boolField;
                     this._CachedFields.Add(address, field);
+                    // TODO: move offset to config value
                     boolField.BitFlag = this.Runtime.ReadValueS32(address + 0x80);
                     break;
                 }
@@ -331,9 +335,9 @@ namespace Gibbed.Unreflect.Core
             field.VfTableObject = this.ReadPointer(address + 0);
             field.Name = this.ReadName(address + this.Configuration.ObjectNameOffset);
             field.Class = uclass;
-            field.ArrayCount = this.Runtime.ReadValueS32(address + 0x40);
-            field.Size = this.Runtime.ReadValueS32(address + 0x44);
-            field.Offset = this.Runtime.ReadValueS32(address + 0x60);
+            field.ArrayCount = this.Runtime.ReadValueS32(address + 0x40); // TODO: move offset to config value
+            field.Size = this.Runtime.ReadValueS32(address + 0x44); // TODO: move offset to config value
+            field.Offset = this.Runtime.ReadValueS32(address + 0x60); // TODO: move offset to config value
             return field;
         }
 
