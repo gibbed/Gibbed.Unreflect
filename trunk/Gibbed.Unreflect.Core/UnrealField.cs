@@ -39,6 +39,11 @@ namespace Gibbed.Unreflect.Core
             throw new NotImplementedException();
         }
 
+        internal virtual void Write(Engine engine, IntPtr objectAddress, object value)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string ToString()
         {
             return this.Name;

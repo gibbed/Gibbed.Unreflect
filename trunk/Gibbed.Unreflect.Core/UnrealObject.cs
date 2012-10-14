@@ -76,6 +76,11 @@ namespace Gibbed.Unreflect.Core
             return this._Shim.TryGetMember(binder, out result);
         }
 
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            return this._Shim.TrySetMember(binder, value);
+        }
+
         public override string ToString()
         {
             return this._Shim.Path;

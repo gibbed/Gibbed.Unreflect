@@ -40,5 +40,20 @@ namespace Gibbed.Unreflect.Core.UnrealFields
 
             return engine.Runtime.ReadValueF32(objectAddress + this.Offset);
         }
+
+        internal override void Write(Engine engine, IntPtr objectAddress, object value)
+        {
+            if (this.ArrayCount != 1)
+            {
+                throw new NotSupportedException();
+            }
+
+            if (this.Size != 4)
+            {
+                throw new InvalidOperationException();
+            }
+
+            engine.Runtime.WriteValueF32(objectAddress + this.Offset, (float)value);
+        }
     }
 }
