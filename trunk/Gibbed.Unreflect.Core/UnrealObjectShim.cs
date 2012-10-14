@@ -96,6 +96,7 @@ namespace Gibbed.Unreflect.Core
             }
 
             field.Write(this._Engine, this.Address, value);
+            this._FieldCache.Remove(binder.Name);
             return true;
         }
 
