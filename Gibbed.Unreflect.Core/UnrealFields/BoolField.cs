@@ -42,5 +42,29 @@ namespace Gibbed.Unreflect.Core.UnrealFields
 
             return (engine.Runtime.ReadValueS32(objectAddress + this.Offset) & this.BitFlag) != 0;
         }
+
+        internal override void Write(Engine engine, IntPtr objectAddress, object value)
+        {
+            if (this.ArrayCount != 1)
+            {
+                throw new NotSupportedException();
+            }
+
+            if (this.Size != 4)
+            {
+                throw new NotImplementedException();
+            }
+
+            var bits = engine.Runtime.ReadValueS32(objectAddress + this.Offset);
+            if ((bool)value == true)
+            {
+                bits |= this.BitFlag;
+            }
+            else
+            {
+                bits &= ~this.BitFlag;
+            }
+            engine.Runtime.WriteValueS32(objectAddress + this.Offset, bits);
+        }
     }
 }

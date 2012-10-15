@@ -87,6 +87,11 @@ namespace Gibbed.Unreflect.Core.UnrealFields
                 }).ToArray();
             }
 
+            if (this.Inner is ComponentField)
+            {
+                return "*** COMPONENT NOT IMPLEMENTED ***";
+            }
+
             if (this.Inner is ClassField)
             {
                 var array = engine.ReadPointerArray(objectAddress + this.Offset);
