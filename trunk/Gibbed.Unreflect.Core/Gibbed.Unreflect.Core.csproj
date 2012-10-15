@@ -54,6 +54,7 @@
     <Compile Include="UnrealFields\BoolField.cs" />
     <Compile Include="UnrealFields\ByteField.cs" />
     <Compile Include="UnrealFields\ClassField.cs" />
+    <Compile Include="UnrealFields\ComponentField.cs" />
     <Compile Include="UnrealFields\FloatField.cs" />
     <Compile Include="UnrealFields\IntField.cs" />
     <Compile Include="UnrealFields\NameField.cs" />

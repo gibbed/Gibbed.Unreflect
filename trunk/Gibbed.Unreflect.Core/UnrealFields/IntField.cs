@@ -28,17 +28,35 @@ namespace Gibbed.Unreflect.Core.UnrealFields
     {
         internal override object Read(Engine engine, IntPtr objectAddress)
         {
-            if (this.ArrayCount != 1)
-            {
-                throw new NotSupportedException();
-            }
+            var fieldAddress = objectAddress + this.Offset;
 
             if (this.Size != 4)
             {
                 throw new InvalidOperationException();
             }
 
-            return engine.Runtime.ReadValueS32(objectAddress + this.Offset);
+            if (this.ArrayCount != 1)
+            {
+                if (fieldAddress == IntPtr.Zero)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                var items = new int[this.ArrayCount];
+                for (int i = 0; i < this.ArrayCount; i++)
+                {
+                    items[i] = engine.Runtime.ReadValueS32(fieldAddress);
+                    fieldAddress += this.Size;
+                }
+                return items;
+            }
+
+            if (this.ArrayCount == 0)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return engine.Runtime.ReadValueS32(fieldAddress);
         }
 
         internal override void Write(Engine engine, IntPtr objectAddress, object value)

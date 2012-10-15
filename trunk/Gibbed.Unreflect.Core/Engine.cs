@@ -260,6 +260,13 @@ namespace Gibbed.Unreflect.Core
                     break;
                 }
 
+                case "Core.ComponentProperty":
+                {
+                    field = new UnrealFields.ComponentField();
+                    this._CachedFields.Add(address, field);
+                    break;
+                }
+
                 case "Core.ArrayProperty":
                 {
                     var arrayField = new UnrealFields.ArrayField();
@@ -318,7 +325,6 @@ namespace Gibbed.Unreflect.Core
                 case "Core.ByteAttributeProperty":
                 case "Core.IntAttributeProperty":
                 case "Core.FloatAttributeProperty":
-                case "Core.ComponentProperty":
                 case "Core.MapProperty":
                 case "Core.DelegateProperty":
                 case "Core.InterfaceProperty":
@@ -407,7 +413,7 @@ namespace Gibbed.Unreflect.Core
             for (var o = 0; o < array.Count; o++)
             {
                 items[o] =
-                    this.ReadName((UnrealNatives.Name)Marshal.PtrToStructure(current, typeof(UnrealNatives.String)));
+                    this.ReadName((UnrealNatives.Name)Marshal.PtrToStructure(current, typeof(UnrealNatives.Name)));
                 current += structureSize;
             }
             handle.Free();
