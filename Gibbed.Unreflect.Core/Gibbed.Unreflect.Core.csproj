@@ -4,7 +4,7 @@
     <Company>Gibbed</Company>
     <Authors>Gibbed</Authors>
     <Description>http://gib.me/</Description>
-    <Copyright>Copyright © Gibbed 2012</Copyright>
+    <Copyright>Copyright © Gibbed 2019</Copyright>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
