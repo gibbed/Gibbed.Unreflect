@@ -40,14 +40,14 @@ namespace Gibbed.Unreflect.Core
         [JsonProperty("Core.Struct:Children", Required = Required.Always)]
         public int CoreStructChildren { get; set; }
 
-        [JsonProperty("Core.Field:Offset", Required = Required.Always)]
-        public int CoreFieldOffset { get; set; }
+        [JsonProperty("Core.Field:ArrayCount", Required = Required.Always)]
+        public int CoreFieldArrayCount { get; set; }
 
         [JsonProperty("Core.Field:Size", Required = Required.Always)]
         public int CoreFieldSize { get; set; }
 
-        [JsonProperty("Core.Field:ArrayCount", Required = Required.Always)]
-        public int CoreFieldArrayCount { get; set; }
+        [JsonProperty("Core.Field:Offset", Required = Required.Always)]
+        public int CoreFieldOffset { get; set; }
 
         [JsonProperty("Core.Field:Next", Required = Required.Always)]
         public int CoreFieldNext { get; set; }
@@ -72,9 +72,9 @@ namespace Gibbed.Unreflect.Core
                 CoreObjectName = this.CoreObjectName,
                 CoreObjectClass = this.CoreObjectClass,
                 CoreStructChildren = this.CoreStructChildren,
-                CoreFieldOffset = this.CoreFieldOffset,
-                CoreFieldSize = this.CoreFieldSize,
                 CoreFieldArrayCount = this.CoreFieldArrayCount,
+                CoreFieldSize = this.CoreFieldSize,
+                CoreFieldOffset = this.CoreFieldOffset,
                 CoreFieldNext = this.CoreFieldNext,
                 CoreArrayPropertyInner = this.CoreArrayPropertyInner,
                 CoreBoolPropertyBitFlag = this.CoreBoolPropertyBitFlag,

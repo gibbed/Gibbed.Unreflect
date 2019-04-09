@@ -30,9 +30,9 @@ namespace Gibbed.Unreflect.Core.UnrealFields
 
         internal override object Read(Engine engine, IntPtr objectAddress)
         {
-            if (this.Size != 4)
+            if (this.Size != IntPtr.Size)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"size mismatch: {this.Size} vs {IntPtr.Size}");
             }
 
             var fieldAddress = objectAddress + this.Offset;
@@ -62,7 +62,7 @@ namespace Gibbed.Unreflect.Core.UnrealFields
             var obj = engine.GetObject(actualObjectAddress);
             if (obj == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("object not found");
             }
             return obj;
         }

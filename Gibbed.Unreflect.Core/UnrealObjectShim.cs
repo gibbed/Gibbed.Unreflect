@@ -74,12 +74,12 @@ namespace Gibbed.Unreflect.Core
             }
             catch (NotImplementedException)
             {
-                result = string.Format("***NOT IMPLEMENTED {0}***", field.Class.Name);
+                result = $"*** NOT IMPLEMENTED {field.Class.Name} ***";
                 return true;
             }
             /*catch (Exception e)
             {
-                result = "*** EXCEPTION: " + e.Message + "***";
+                result = $"*** EXCEPTION {e.Message} ***";
                 return true;
             }*/
 

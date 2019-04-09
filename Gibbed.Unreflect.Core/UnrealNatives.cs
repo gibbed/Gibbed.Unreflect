@@ -51,6 +51,7 @@ namespace Gibbed.Unreflect.Core
         {
             public IntPtr Data;
             public int Length;
+            public int Allocated;
         }
 
         [StructLayout(LayoutKind.Sequential)]

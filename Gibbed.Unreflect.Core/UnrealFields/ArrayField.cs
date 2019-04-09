@@ -112,7 +112,7 @@ namespace Gibbed.Unreflect.Core.UnrealFields
                 }).ToArray();
             }
 
-            if (this.Inner is StrField)
+            if (this.Inner is StringField)
             {
                 return engine.ReadStringArray(objectAddress + this.Offset);
             }

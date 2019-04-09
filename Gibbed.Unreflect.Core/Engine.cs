@@ -318,7 +318,7 @@ namespace Gibbed.Unreflect.Core
 
                 case "Core.StrProperty":
                 {
-                    field = new UnrealFields.StrField();
+                    field = new UnrealFields.StringField();
                     this._CachedFields.Add(address, field);
                     break;
                 }
@@ -349,11 +349,11 @@ namespace Gibbed.Unreflect.Core
             }
 
             var arrayCountAddress = address + this.Offsets.CoreFieldArrayCount;
-            var sizeAddress = address + this.Offsets.CoreFieldArrayCount;
-            var offsetAddress = address + this.Offsets.CoreFieldArrayCount;
+            var sizeAddress = address + this.Offsets.CoreFieldSize;
+            var offsetAddress = address + this.Offsets.CoreFieldOffset;
 
             field.Address = address;
-            field.VfTableObject = this.ReadPointer(address + 0);
+            field.VfTableObject = this.ReadPointer(address);
             field.Name = this.ReadName(address + this.Offsets.CoreObjectName);
             field.Class = uclass;
             field.ArrayCount = this.Runtime.ReadValueS32(arrayCountAddress);
@@ -395,7 +395,7 @@ namespace Gibbed.Unreflect.Core
                 return new string[0];
             }
 
-            var structureSize = 12;
+            var structureSize = Marshal.SizeOf(typeof(UnrealNatives.String));
             var buffer = this.Runtime.ReadBytes(array.Data, array.Count * structureSize);
             var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             var current = handle.AddrOfPinnedObject();
@@ -418,7 +418,7 @@ namespace Gibbed.Unreflect.Core
                 return new string[0];
             }
 
-            var structureSize = 8;
+            var structureSize = Marshal.SizeOf(typeof(UnrealNatives.Name));
             var buffer = this.Runtime.ReadBytes(array.Data, array.Count * structureSize);
             var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             var current = handle.AddrOfPinnedObject();
