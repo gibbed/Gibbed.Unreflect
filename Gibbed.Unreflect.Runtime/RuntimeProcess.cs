@@ -181,11 +181,12 @@ namespace Gibbed.Unreflect.Runtime
 
             uint size = (uint)length;
             uint read;
-            var result = Win32.ReadProcessMemory(this.Handle,
-                                                 address,
-                                                 bufferHandle.AddrOfPinnedObject() + offset,
-                                                 size,
-                                                 out read);
+            var result = Win32.ReadProcessMemory(
+                this.Handle,
+                address,
+                bufferHandle.AddrOfPinnedObject() + offset,
+                size,
+                out read);
 
             bufferHandle.Free();
 
@@ -228,11 +229,12 @@ namespace Gibbed.Unreflect.Runtime
 
             uint size = (uint)length;
             uint written;
-            var result = Win32.WriteProcessMemory(this.Handle,
-                                                  address,
-                                                  bufferHandle.AddrOfPinnedObject() + offset,
-                                                  size,
-                                                  out written);
+            var result = Win32.WriteProcessMemory(
+                this.Handle,
+                address,
+                bufferHandle.AddrOfPinnedObject() + offset,
+                size,
+                out written);
 
             bufferHandle.Free();
 

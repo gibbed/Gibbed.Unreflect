@@ -35,30 +35,34 @@ namespace Gibbed.Unreflect.Runtime
         public static uint ThreadAllAccess = StandardRightsRequired | Synchronize | 0x3FFu;
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr OpenProcess(uint desiredAccess,
-                                                [MarshalAs(UnmanagedType.Bool)] bool inheritHandle,
-                                                uint processId);
+        public static extern IntPtr OpenProcess(
+            uint desiredAccess,
+            [MarshalAs(UnmanagedType.Bool)] bool inheritHandle,
+            uint processId);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ReadProcessMemory(IntPtr process,
-                                                    IntPtr baseAddress,
-                                                    IntPtr buffer,
-                                                    uint size,
-                                                    out uint numberOfBytesRead);
+        public static extern bool ReadProcessMemory(
+            IntPtr process,
+            IntPtr baseAddress,
+            IntPtr buffer,
+            uint size,
+            out uint numberOfBytesRead);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool WriteProcessMemory(IntPtr process,
-                                                     IntPtr baseAddress,
-                                                     IntPtr buffer,
-                                                     uint size,
-                                                     out uint numberOfBytesWritten);
+        public static extern bool WriteProcessMemory(
+            IntPtr process,
+            IntPtr baseAddress,
+            IntPtr buffer,
+            uint size,
+            out uint numberOfBytesWritten);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr OpenThread(uint desiredAccess,
-                                               [MarshalAs(UnmanagedType.Bool)] bool inheritHandle,
-                                               uint threadId);
+        public static extern IntPtr OpenThread(
+            uint desiredAccess,
+            [MarshalAs(UnmanagedType.Bool)] bool inheritHandle,
+            uint threadId);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint SuspendThread(IntPtr thread);

@@ -45,8 +45,7 @@ namespace Gibbed.Unreflect.Core
                 return false;
             }
 
-            return this.Class == uclass ||
-                   this.Class.IsA(uclass) == true;
+            return this.Class == uclass || this.Class.IsA(uclass) == true;
         }
 
         public override string ToString()

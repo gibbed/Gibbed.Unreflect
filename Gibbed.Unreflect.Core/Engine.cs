@@ -32,17 +32,49 @@ namespace Gibbed.Unreflect.Core
 {
     public class Engine
     {
+        private readonly Dictionary<int, string> _CachedNames;
+        private readonly Dictionary<IntPtr, UnrealClass> _CachedClasses;
+        private readonly Dictionary<IntPtr, UnrealField> _CachedFields;
+        private readonly Dictionary<IntPtr, string> _CachedPaths;
+
         internal readonly Configuration Configuration;
+        internal OffsetConfiguration Offsets => this.Configuration.Offsets;
+
         internal readonly RuntimeBase Runtime;
 
         private readonly IntPtr[] _NameAddresses;
         private readonly IntPtr[] _ObjectAddresses;
-        private readonly Dictionary<IntPtr, UnrealObjectShim> _ObjectShims = new Dictionary<IntPtr, UnrealObjectShim>();
+        private readonly Dictionary<IntPtr, UnrealObjectShim> _ObjectShims;
 
-        private readonly Dictionary<int, string> _CachedNames = new Dictionary<int, string>();
-        private readonly Dictionary<IntPtr, UnrealClass> _CachedClasses = new Dictionary<IntPtr, UnrealClass>();
-        private readonly Dictionary<IntPtr, UnrealField> _CachedFields = new Dictionary<IntPtr, UnrealField>();
-        private readonly Dictionary<IntPtr, string> _CachedPaths = new Dictionary<IntPtr, string>();
+        public Engine(Configuration configuration, RuntimeBase runtime)
+        {
+            if (runtime == null)
+            {
+                throw new ArgumentNullException("runtime");
+            }
+
+            this._CachedNames = new Dictionary<int, string>();
+            this._CachedClasses = new Dictionary<IntPtr, UnrealClass>();
+            this._CachedFields = new Dictionary<IntPtr, UnrealField>();
+            this._CachedPaths = new Dictionary<IntPtr, string>();
+
+            this.Configuration = (Configuration)configuration.Clone();
+            this.Runtime = runtime;
+
+            this._NameAddresses = this.ReadPointerArray(configuration.GlobalNameArrayAddress);
+            this._ObjectAddresses = this.ReadPointerArray(configuration.GlobalObjectArrayAddress);
+
+            this._ObjectShims = new Dictionary<IntPtr, UnrealObjectShim>();
+            foreach (var objectAddress in this._ObjectAddresses.Where(oa => oa != IntPtr.Zero))
+            {
+                var objectClassPointer = this.ReadPointer(objectAddress + this.Offsets.CoreObjectClass);
+                var objectClass = this.ReadClass(objectClassPointer);
+                var objectName = this.ReadName(objectAddress + this.Offsets.CoreObjectName);
+                var objectPath = this.ReadPath(objectAddress);
+                var objectShim = new UnrealObjectShim(this, objectAddress, objectClass, objectName, objectPath);
+                this._ObjectShims.Add(objectAddress, objectShim);
+            }
+        }
 
         public IEnumerable<UnrealObject> Objects
         {
@@ -79,29 +111,6 @@ namespace Gibbed.Unreflect.Core
             return uclass;
         }
 
-        public Engine(Configuration configuration, RuntimeBase runtime)
-        {
-            if (runtime == null)
-            {
-                throw new ArgumentNullException("runtime");
-            }
-
-            this.Configuration = (Configuration)configuration.Clone();
-            this.Runtime = runtime;
-            this._NameAddresses = this.ReadPointerArray(configuration.GlobalNameArrayAddress);
-            this._ObjectAddresses = this.ReadPointerArray(configuration.GlobalObjectArrayAddress);
-
-            foreach (var objectAddress in this._ObjectAddresses.Where(oa => oa != IntPtr.Zero))
-            {
-                var objectClassPointer = this.ReadPointer(objectAddress + this.Configuration.ObjectClassOffset);
-                var objectClass = this.ReadClass(objectClassPointer);
-                var objectName = this.ReadName(objectAddress + this.Configuration.ObjectNameOffset);
-                var objectPath = this.ReadPath(objectAddress);
-                this._ObjectShims.Add(objectAddress,
-                                      new UnrealObjectShim(this, objectAddress, objectClass, objectName, objectPath));
-            }
-        }
-
         internal string ReadString(IntPtr address)
         {
             if (address == IntPtr.Zero)
@@ -118,7 +127,7 @@ namespace Gibbed.Unreflect.Core
             return this.Runtime.ReadString(str.Data, str.Length, Encoding.Unicode);
         }
 
-        internal string ReadName(UnrealNatives.Name name)
+        internal string ReadNameEntry(UnrealNatives.Name name)
         {
             string value;
 
@@ -129,7 +138,7 @@ namespace Gibbed.Unreflect.Core
             else
             {
                 var dataAddress = this._NameAddresses[name.Id];
-                value = this.Runtime.ReadStringZ(dataAddress + 16, Encoding.ASCII);
+                value = this.Runtime.ReadStringZ(dataAddress + this.Configuration.NameEntryStringOffset, Encoding.ASCII);
                 this._CachedNames.Add(name.Id, value);
             }
 
@@ -148,7 +157,7 @@ namespace Gibbed.Unreflect.Core
                 throw new ArgumentNullException("address");
             }
 
-            return this.ReadName(this.Runtime.ReadStructure<UnrealNatives.Name>(address));
+            return this.ReadNameEntry(this.Runtime.ReadStructure<UnrealNatives.Name>(address));
         }
 
         internal string ReadPath(IntPtr address)
@@ -163,13 +172,13 @@ namespace Gibbed.Unreflect.Core
                 return this._CachedPaths[address];
             }
 
-            var path = this.ReadName(address + this.Configuration.ObjectNameOffset);
-            var outer = this.ReadPointer(address + this.Configuration.ObjectOuterOffset);
+            var path = this.ReadName(address + this.Offsets.CoreObjectName);
+            var outer = this.ReadPointer(address + this.Offsets.CoreObjectOuter);
             while (outer != IntPtr.Zero && outer != address)
             {
-                var name = this.ReadName(outer + this.Configuration.ObjectNameOffset);
+                var name = this.ReadName(outer + this.Offsets.CoreObjectName);
                 path = name + "." + path;
-                outer = this.ReadPointer(outer + this.Configuration.ObjectOuterOffset);
+                outer = this.ReadPointer(outer + this.Offsets.CoreObjectOuter);
             }
 
             this._CachedPaths.Add(address, path);
@@ -187,23 +196,23 @@ namespace Gibbed.Unreflect.Core
             this._CachedClasses.Add(address, uclass);
 
             uclass.Address = address;
-            uclass.VfTableObject = this.ReadPointer(address + 0);
-            uclass.Name = this.ReadName(address + this.Configuration.ObjectNameOffset);
+            uclass.VfTableObject = this.ReadPointer(address);
+            uclass.Name = this.ReadName(address + this.Offsets.CoreObjectName);
             uclass.Path = this.ReadPath(address);
 
-            var classAddress = this.ReadPointer(address + this.Configuration.ObjectClassOffset);
+            var classAddress = this.ReadPointer(address + this.Offsets.CoreObjectClass);
             if (classAddress != IntPtr.Zero &&
                 classAddress != address)
             {
                 uclass.Class = this.ReadClass(classAddress);
             }
 
-            var fieldAddress = this.ReadPointer(address + this.Configuration.ClassFirstFieldOffset);
+            var fieldAddress = this.ReadPointer(address + this.Offsets.CoreStructChildren);
             var fields = new List<UnrealField>();
             while (fieldAddress != IntPtr.Zero)
             {
                 fields.Add(this.ReadField(fieldAddress));
-                fieldAddress = this.ReadPointer(fieldAddress + this.Configuration.FieldNextFieldOffset);
+                fieldAddress = this.ReadPointer(fieldAddress + this.Offsets.CoreFieldNext);
             }
             uclass.Fields = fields.ToArray();
 
@@ -218,9 +227,8 @@ namespace Gibbed.Unreflect.Core
             }
 
             UnrealClass uclass = null;
-            var classAddress = this.ReadPointer(address + this.Configuration.ObjectClassOffset);
-            if (classAddress != IntPtr.Zero &&
-                classAddress != address)
+            var classAddress = this.ReadPointer(address + this.Offsets.CoreObjectClass);
+            if (classAddress != IntPtr.Zero && classAddress != address)
             {
                 uclass = this.ReadClass(classAddress);
             }
@@ -245,8 +253,8 @@ namespace Gibbed.Unreflect.Core
                     var objectField = new UnrealFields.ObjectField();
                     field = objectField;
                     this._CachedFields.Add(address, field);
-                    // TODO: move offset to config value
-                    objectField.PropertyClass = this.ReadClass(this.ReadPointer(address + 0x80));
+                    var propertyClassAddress = this.ReadPointer(address + this.Offsets.CoreObjectPropertyPropertyClass);
+                    objectField.PropertyClass = this.ReadClass(propertyClassAddress);
                     break;
                 }
 
@@ -255,8 +263,8 @@ namespace Gibbed.Unreflect.Core
                     var structField = new UnrealFields.StructField();
                     field = structField;
                     this._CachedFields.Add(address, field);
-                    // TODO: move offset to config value
-                    structField.Structure = this.ReadClass(this.ReadPointer(address + 0x80));
+                    var structAddress = this.ReadPointer(address + this.Offsets.CoreStructPropertyStruct);
+                    structField.Structure = this.ReadClass(structAddress);
                     break;
                 }
 
@@ -272,8 +280,8 @@ namespace Gibbed.Unreflect.Core
                     var arrayField = new UnrealFields.ArrayField();
                     field = arrayField;
                     this._CachedFields.Add(address, field);
-                    // TODO: move offset to config value
-                    arrayField.Inner = this.ReadField(this.ReadPointer(address + 0x80));
+                    var innerAddress = this.ReadPointer(address + this.Offsets.CoreArrayPropertyInner);
+                    arrayField.Inner = this.ReadField(innerAddress);
                     break;
                 }
 
@@ -282,8 +290,8 @@ namespace Gibbed.Unreflect.Core
                     var boolField = new UnrealFields.BoolField();
                     field = boolField;
                     this._CachedFields.Add(address, field);
-                    // TODO: move offset to config value
-                    boolField.BitFlag = this.Runtime.ReadValueS32(address + 0x80);
+                    var bitFlagAddress = address + this.Offsets.CoreBoolPropertyBitFlag;
+                    boolField.BitFlag = this.Runtime.ReadValueS32(bitFlagAddress);
                     break;
                 }
 
@@ -340,13 +348,17 @@ namespace Gibbed.Unreflect.Core
                 }
             }
 
+            var arrayCountAddress = address + this.Offsets.CoreFieldArrayCount;
+            var sizeAddress = address + this.Offsets.CoreFieldArrayCount;
+            var offsetAddress = address + this.Offsets.CoreFieldArrayCount;
+
             field.Address = address;
             field.VfTableObject = this.ReadPointer(address + 0);
-            field.Name = this.ReadName(address + this.Configuration.ObjectNameOffset);
+            field.Name = this.ReadName(address + this.Offsets.CoreObjectName);
             field.Class = uclass;
-            field.ArrayCount = this.Runtime.ReadValueS32(address + 0x40); // TODO: move offset to config value
-            field.Size = this.Runtime.ReadValueS32(address + 0x44); // TODO: move offset to config value
-            field.Offset = this.Runtime.ReadValueS32(address + 0x60); // TODO: move offset to config value
+            field.ArrayCount = this.Runtime.ReadValueS32(arrayCountAddress);
+            field.Size = this.Runtime.ReadValueS32(sizeAddress);
+            field.Offset = this.Runtime.ReadValueS32(offsetAddress);
             return field;
         }
 
@@ -369,9 +381,10 @@ namespace Gibbed.Unreflect.Core
 
         internal void WritePointerArray(IntPtr address, IntPtr[] items)
         {
-            this.WriteStructureArray(address,
-                                     items.Select(i => new UnrealNatives.Pointer(i))
-                                         .ToArray());
+            this.WriteStructureArray(
+                address,
+                items.Select(i => new UnrealNatives.Pointer(i))
+                    .ToArray());
         }
 
         internal string[] ReadStringArray(IntPtr address)
@@ -389,8 +402,8 @@ namespace Gibbed.Unreflect.Core
             var items = new string[array.Count];
             for (var o = 0; o < array.Count; o++)
             {
-                items[o] =
-                    this.ReadString((UnrealNatives.String)Marshal.PtrToStructure(current, typeof(UnrealNatives.String)));
+                var ustring = (UnrealNatives.String)Marshal.PtrToStructure(current, typeof(UnrealNatives.String));
+                items[o] = this.ReadString(ustring);
                 current += structureSize;
             }
             handle.Free();
@@ -412,8 +425,8 @@ namespace Gibbed.Unreflect.Core
             var items = new string[array.Count];
             for (var o = 0; o < array.Count; o++)
             {
-                items[o] =
-                    this.ReadName((UnrealNatives.Name)Marshal.PtrToStructure(current, typeof(UnrealNatives.Name)));
+                var uname = (UnrealNatives.Name)Marshal.PtrToStructure(current, typeof(UnrealNatives.Name));
+                items[o] = this.ReadNameEntry(uname);
                 current += structureSize;
             }
             handle.Free();
@@ -457,8 +470,7 @@ namespace Gibbed.Unreflect.Core
             }
 
             var array = this.Runtime.ReadStructure<UnrealNatives.Array>(address);
-            if (array.Data == IntPtr.Zero ||
-                array.Count < items.Length)
+            if (array.Data == IntPtr.Zero || array.Count < items.Length)
             {
                 throw new InvalidOperationException();
             }

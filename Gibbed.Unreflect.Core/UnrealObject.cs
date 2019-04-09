@@ -37,8 +37,7 @@ namespace Gibbed.Unreflect.Core
                 return false;
             }
 
-            return this._Shim.Class == uclass ||
-                   this._Shim.Class.IsA(uclass) == true;
+            return this._Shim.Class == uclass || this._Shim.Class.IsA(uclass) == true;
         }
 
         public string GetName()

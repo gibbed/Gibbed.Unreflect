@@ -286,11 +286,7 @@ namespace Gibbed.Unreflect.Runtime
                 throw new ObjectDisposedException(this._ObjectName);
             }
 
-            this.WriteBytes(address,
-                            new[]
-                            {
-                                value
-                            });
+            this.WriteBytes(address, new[] { value });
         }
 
         public void WriteValueS8(IntPtr address, sbyte value)
@@ -300,11 +296,7 @@ namespace Gibbed.Unreflect.Runtime
                 throw new ObjectDisposedException(this._ObjectName);
             }
 
-            this.WriteBytes(address,
-                            new[]
-                            {
-                                (byte)value
-                            });
+            this.WriteBytes(address, new[] { (byte)value });
         }
 
         public void WriteValueU16(IntPtr address, ushort value)
@@ -391,9 +383,19 @@ namespace Gibbed.Unreflect.Runtime
         {
             var structureSize = Marshal.SizeOf(typeof(T));
             var buffer = new byte[structureSize];
-            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            Marshal.StructureToPtr(structure, handle.AddrOfPinnedObject(), false);
-            handle.Free();
+            GCHandle handle = default;
+            try
+            {
+                handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+                Marshal.StructureToPtr(structure, handle.AddrOfPinnedObject(), false);
+            }
+            finally
+            {
+                if (handle.IsAllocated == true)
+                {
+                    handle.Free();
+                }
+            }
             this.WriteBytes(address, buffer);
         }
     }

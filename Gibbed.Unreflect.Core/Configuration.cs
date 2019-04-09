@@ -30,38 +30,36 @@ namespace Gibbed.Unreflect.Core
     [JsonObject(MemberSerialization.OptIn)]
     public struct Configuration : ICloneable
     {
-        [JsonProperty("global_name_array_address")]
-        [JsonConverter(typeof(PointerConverter))]
-        public IntPtr GlobalNameArrayAddress;
+        [JsonProperty("base_address", Required = Required.Always)]
+        [JsonConverter(typeof(JsonPointerConverter))]
+        public IntPtr BaseAddress { get; set; }
 
-        [JsonProperty("global_object_array_address")]
-        [JsonConverter(typeof(PointerConverter))]
-        public IntPtr GlobalObjectArrayAddress;
+        [JsonProperty("global_name_array_address", Required = Required.Always)]
+        [JsonConverter(typeof(JsonPointerConverter))]
+        public IntPtr GlobalNameArrayAddress { get; set; }
 
-        [JsonProperty("object_name_offset")]
-        public int ObjectNameOffset;
+        [JsonProperty("global_object_array_address", Required = Required.Always)]
+        [JsonConverter(typeof(JsonPointerConverter))]
+        public IntPtr GlobalObjectArrayAddress { get; set; }
 
-        [JsonProperty("object_outer_offset")]
-        public int ObjectOuterOffset;
+        [JsonProperty("name_entry_string_offset", Required = Required.Always)]
+        public int NameEntryStringOffset { get; set; }
 
-        [JsonProperty("object_class_offset")]
-        public int ObjectClassOffset;
+        [JsonProperty("offsets")]
+        public OffsetConfiguration Offsets { get; set; }
 
-        [JsonProperty("class_first_field_offset")]
-        public int ClassFirstFieldOffset;
-
-        [JsonProperty("field_next_field_offset")]
-        public int FieldNextFieldOffset;
-
-        private static IntPtr AdjustAddress(ProcessModule module, IntPtr address)
+        private static IntPtr AdjustAddress(IntPtr originalBaseAddress, ProcessModule module, IntPtr address)
         {
-            return module.BaseAddress + (address.ToInt32() - 0x400000);
+            var addressValue = address.ToInt64();
+            addressValue -= originalBaseAddress.ToInt64();
+            addressValue += module.BaseAddress.ToInt64();
+            return new IntPtr(addressValue);
         }
 
         public void AdjustAddresses(ProcessModule module)
         {
-            this.GlobalNameArrayAddress = AdjustAddress(module, this.GlobalNameArrayAddress);
-            this.GlobalObjectArrayAddress = AdjustAddress(module, this.GlobalObjectArrayAddress);
+            this.GlobalNameArrayAddress = AdjustAddress(this.BaseAddress, module, this.GlobalNameArrayAddress);
+            this.GlobalObjectArrayAddress = AdjustAddress(this.BaseAddress, module, this.GlobalObjectArrayAddress);
         }
 
         public static Configuration Load(string path)
@@ -88,35 +86,12 @@ namespace Gibbed.Unreflect.Core
         {
             return new Configuration()
             {
+                BaseAddress = this.BaseAddress,
                 GlobalNameArrayAddress = this.GlobalNameArrayAddress,
                 GlobalObjectArrayAddress = this.GlobalObjectArrayAddress,
-                ObjectNameOffset = this.ObjectNameOffset,
-                ObjectOuterOffset = this.ObjectOuterOffset,
-                ObjectClassOffset = this.ObjectClassOffset,
-                ClassFirstFieldOffset = this.ClassFirstFieldOffset,
-                FieldNextFieldOffset = this.FieldNextFieldOffset,
+                NameEntryStringOffset = this.NameEntryStringOffset,
+                Offsets = (OffsetConfiguration)this.Offsets.Clone(),
             };
-        }
-
-        internal class PointerConverter : JsonConverter
-        {
-            public override bool CanConvert(Type objectType)
-            {
-                return objectType == typeof(int);
-            }
-
-            public override object ReadJson(JsonReader reader,
-                                            Type objectType,
-                                            object existingValue,
-                                            JsonSerializer serializer)
-            {
-                return new IntPtr((long)reader.Value);
-            }
-
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                writer.WriteValue(((IntPtr)value).ToInt32());
-            }
         }
     }
 }
