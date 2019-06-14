@@ -129,25 +129,27 @@ namespace Gibbed.Unreflect.Core
 
         internal string ReadNameEntry(UnrealNatives.Name name)
         {
-            string value;
+            var sb = new StringBuilder();
 
             if (this._CachedNames.ContainsKey(name.Id) == true)
             {
-                value = this._CachedNames[name.Id];
+                sb.Append(this._CachedNames[name.Id]);
             }
             else
             {
-                var dataAddress = this._NameAddresses[name.Id];
-                value = this.Runtime.ReadStringZ(dataAddress + this.Configuration.NameEntryStringOffset, Encoding.ASCII);
+                var dataAddress = this._NameAddresses[name.Id] + this.Configuration.NameEntryStringOffset;
+                var value = this.Runtime.ReadStringZ(dataAddress, Encoding.ASCII);
                 this._CachedNames.Add(name.Id, value);
+                sb.Append(value);
             }
 
             if (name.Index != 0)
             {
-                value += "_" + (name.Index - 1).ToString(CultureInfo.InvariantCulture);
+                sb.Append('_');
+                sb.Append((name.Index - 1).ToString(CultureInfo.InvariantCulture));
             }
 
-            return value;
+            return sb.ToString();
         }
 
         internal string ReadName(IntPtr address)
