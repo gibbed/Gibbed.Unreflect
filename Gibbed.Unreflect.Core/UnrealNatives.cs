@@ -58,7 +58,7 @@ namespace Gibbed.Unreflect.Core
         public struct Name
         {
             public int Id;
-            public int Index;
+            public uint Index;
         }
     }
 }
