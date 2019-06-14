@@ -144,7 +144,7 @@ namespace Gibbed.Unreflect.Core
 
             if (name.Index != 0)
             {
-                value += "_" + name.Index.ToString(CultureInfo.InvariantCulture);
+                value += "_" + (name.Index - 1).ToString(CultureInfo.InvariantCulture);
             }
 
             return value;
