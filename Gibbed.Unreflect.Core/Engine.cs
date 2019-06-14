@@ -137,8 +137,14 @@ namespace Gibbed.Unreflect.Core
             }
             else
             {
-                var dataAddress = this._NameAddresses[name.Id] + this.Configuration.NameEntryStringOffset;
-                var value = this.Runtime.ReadStringZ(dataAddress, Encoding.ASCII);
+                var dataAddress = this._NameAddresses[name.Id];
+                var indexAddress = dataAddress + this.Configuration.NameEntryIndexOffset;
+                var index = this.Runtime.ReadValueS32(indexAddress);
+                var encoding = (index & 1) == 0
+                    ? Encoding.ASCII
+                    : Encoding.Unicode;
+                var stringAddress = dataAddress + this.Configuration.NameEntryStringOffset;
+                var value = this.Runtime.ReadStringZ(stringAddress, encoding);
                 this._CachedNames.Add(name.Id, value);
                 sb.Append(value);
             }

@@ -42,6 +42,9 @@ namespace Gibbed.Unreflect.Core
         [JsonConverter(typeof(JsonPointerConverter))]
         public IntPtr GlobalObjectArrayAddress { get; set; }
 
+        [JsonProperty("name_entry_index_offset", Required = Required.Always)]
+        public int NameEntryIndexOffset { get; set; }
+
         [JsonProperty("name_entry_string_offset", Required = Required.Always)]
         public int NameEntryStringOffset { get; set; }
 
@@ -89,6 +92,7 @@ namespace Gibbed.Unreflect.Core
                 BaseAddress = this.BaseAddress,
                 GlobalNameArrayAddress = this.GlobalNameArrayAddress,
                 GlobalObjectArrayAddress = this.GlobalObjectArrayAddress,
+                NameEntryIndexOffset = this.NameEntryIndexOffset,
                 NameEntryStringOffset = this.NameEntryStringOffset,
                 Offsets = (OffsetConfiguration)this.Offsets.Clone(),
             };
