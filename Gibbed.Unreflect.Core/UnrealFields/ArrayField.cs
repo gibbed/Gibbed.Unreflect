@@ -47,6 +47,27 @@ namespace Gibbed.Unreflect.Core.UnrealFields
                 return engine.Runtime.ReadBytes(array.Data, array.Count);
             }
 
+            if (this.Inner is IntField)
+            {
+                var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);
+                if (array.Data == IntPtr.Zero)
+                {
+                    return new int[0];
+                }
+
+                var intField = (IntField)this.Inner;
+                var bytes = engine.Runtime.ReadBytes(array.Data, array.Count * 4);
+
+                var item = 0;
+                var items = new int[array.Count];
+                for (int i = 0; i < array.Count; i++)
+                {
+                    items[i] = BitConverter.ToInt32(bytes, item);
+                    item += intField.Size;
+                }
+                return items;
+            }
+
             if (this.Inner is StructField)
             {
                 var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);
