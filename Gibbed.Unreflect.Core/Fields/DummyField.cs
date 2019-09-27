@@ -20,30 +20,9 @@
  *    distribution.
  */
 
-using System;
-using Newtonsoft.Json;
-
-namespace Gibbed.Unreflect.Core
+namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class JsonPointerConverter : JsonConverter
+    internal class DummyField : UnrealField
     {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(int) || objectType == typeof(long);
-        }
-
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer)
-        {
-            return new IntPtr((long)reader.Value);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue(((IntPtr)value).ToInt32());
-        }
     }
 }

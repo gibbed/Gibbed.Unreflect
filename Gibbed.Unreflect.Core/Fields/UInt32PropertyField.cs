@@ -21,29 +21,23 @@
  */
 
 using System;
-using Newtonsoft.Json;
 
-namespace Gibbed.Unreflect.Core
+namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class JsonPointerConverter : JsonConverter
+    internal class UInt32PropertyField : PrimitivePropertyField<uint>
     {
-        public override bool CanConvert(Type objectType)
+        public UInt32PropertyField() : base(4)
         {
-            return objectType == typeof(int) || objectType == typeof(long);
         }
 
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer)
+        protected override uint ReadPrimitive(Engine engine, IntPtr address)
         {
-            return new IntPtr((long)reader.Value);
+            return engine.Runtime.ReadValueU32(address);
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        protected override void WritePrimitive(Engine engine, IntPtr address, uint value)
         {
-            writer.WriteValue(((IntPtr)value).ToInt32());
+            engine.Runtime.WriteValueU32(address, value);
         }
     }
 }

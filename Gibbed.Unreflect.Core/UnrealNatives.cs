@@ -60,5 +60,61 @@ namespace Gibbed.Unreflect.Core
             public int Id;
             public uint Index;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NameValuePair
+        {
+            public Name Name;
+            public long Value;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NameTable
+        {
+            public const int MaxChunkCount = 0x80;
+            public const int ItemsPerChunk = 0x4000;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxChunkCount)]
+            public IntPtr[] ChunkPointers;
+            public int ItemCount;
+            public int ChunkCount;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NameTableChunk
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = NameTable.ItemsPerChunk)]
+            public IntPtr[] ItemPointers;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ObjectTable
+        {
+            public const int ItemsPerChunk = 0x10000;
+
+            public IntPtr ChunkPointers;
+            public IntPtr Unknown;
+            public int MaxItemCount;
+            public int ItemCount;
+            public int MaxChunkCount;
+            public int ChunkCount;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ObjectTableItem
+        {
+            public IntPtr ObjectPointer;
+            public int Unknown1;
+            public int Unknown2;
+            public int Unknown3;
+            public int Unknown4;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ObjectTableChunk
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = ObjectTable.ItemsPerChunk)]
+            public ObjectTableItem[] Items;
+        }
     }
 }

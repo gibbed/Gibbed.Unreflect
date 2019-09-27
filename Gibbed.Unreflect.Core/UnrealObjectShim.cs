@@ -50,27 +50,27 @@ namespace Gibbed.Unreflect.Core
 
         public IEnumerable<string> GetDynamicMemberNames()
         {
-            return this.Class.Fields.Select(f => f.Name);
+            return this.Class.GetFieldNames();
         }
 
         public bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            if (this._FieldCache.ContainsKey(binder.Name) == true)
+            if (this._FieldCache.TryGetValue(binder.Name, out result) == true)
             {
-                result = this._FieldCache[binder.Name];
                 return true;
             }
 
-            var field = this.Class.Fields.SingleOrDefault(f => f.Name == binder.Name);
+            var field = this.Class.GetField(binder.Name);
             if (field == null)
             {
+                //result = $"*** INVALID FIELD {binder.Name} ***";
                 result = null;
                 return false;
             }
 
             try
             {
-                result = field.Read(this._Engine, this.Address);
+                result = field.ReadInstance(this._Engine, this.Address);
             }
             catch (NotImplementedException)
             {
@@ -95,7 +95,7 @@ namespace Gibbed.Unreflect.Core
                 return false;
             }
 
-            field.Write(this._Engine, this.Address, value);
+            field.WriteInstance(this._Engine, this.Address, value);
             this._FieldCache.Remove(binder.Name);
             return true;
         }

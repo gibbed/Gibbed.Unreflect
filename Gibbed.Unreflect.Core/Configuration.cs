@@ -34,13 +34,13 @@ namespace Gibbed.Unreflect.Core
         [JsonConverter(typeof(JsonPointerConverter))]
         public IntPtr BaseAddress { get; set; }
 
-        [JsonProperty("global_name_array_address", Required = Required.Always)]
+        [JsonProperty("global_name_table_address_address", Required = Required.Always)]
         [JsonConverter(typeof(JsonPointerConverter))]
-        public IntPtr GlobalNameArrayAddress { get; set; }
+        public IntPtr GlobalNameTableAddressAddress { get; set; }
 
-        [JsonProperty("global_object_array_address", Required = Required.Always)]
+        [JsonProperty("global_object_table_address", Required = Required.Always)]
         [JsonConverter(typeof(JsonPointerConverter))]
-        public IntPtr GlobalObjectArrayAddress { get; set; }
+        public IntPtr GlobalObjectTableAddress { get; set; }
 
         [JsonProperty("name_entry_index_offset", Required = Required.Always)]
         public int NameEntryIndexOffset { get; set; }
@@ -61,8 +61,8 @@ namespace Gibbed.Unreflect.Core
 
         public void AdjustAddresses(ProcessModule module)
         {
-            this.GlobalNameArrayAddress = AdjustAddress(this.BaseAddress, module, this.GlobalNameArrayAddress);
-            this.GlobalObjectArrayAddress = AdjustAddress(this.BaseAddress, module, this.GlobalObjectArrayAddress);
+            this.GlobalNameTableAddressAddress = AdjustAddress(this.BaseAddress, module, this.GlobalNameTableAddressAddress);
+            this.GlobalObjectTableAddress = AdjustAddress(this.BaseAddress, module, this.GlobalObjectTableAddress);
         }
 
         public static Configuration Load(string path)
@@ -90,8 +90,8 @@ namespace Gibbed.Unreflect.Core
             return new Configuration()
             {
                 BaseAddress = this.BaseAddress,
-                GlobalNameArrayAddress = this.GlobalNameArrayAddress,
-                GlobalObjectArrayAddress = this.GlobalObjectArrayAddress,
+                GlobalNameTableAddressAddress = this.GlobalNameTableAddressAddress,
+                GlobalObjectTableAddress = this.GlobalObjectTableAddress,
                 NameEntryIndexOffset = this.NameEntryIndexOffset,
                 NameEntryStringOffset = this.NameEntryStringOffset,
                 Offsets = (OffsetConfiguration)this.Offsets.Clone(),

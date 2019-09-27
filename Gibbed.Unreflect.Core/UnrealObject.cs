@@ -30,14 +30,14 @@ namespace Gibbed.Unreflect.Core
     {
         private readonly UnrealObjectShim _Shim;
 
-        public bool IsA(UnrealClass uclass)
+        public bool IsA(UnrealClass someBase)
         {
-            if (this._Shim.Class == null)
-            {
-                return false;
-            }
+            return this._Shim.Class != null && this._Shim.Class.IsA(someBase);
+        }
 
-            return this._Shim.Class == uclass || this._Shim.Class.IsA(uclass) == true;
+        public bool IsChildOf(UnrealClass someBase)
+        {
+            return this._Shim.Class != null && this._Shim.Class.IsChildOf(someBase);
         }
 
         public string GetName()

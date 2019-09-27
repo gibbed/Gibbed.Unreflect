@@ -21,6 +21,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Gibbed.Unreflect.Core
 {
@@ -30,22 +32,77 @@ namespace Gibbed.Unreflect.Core
         public IntPtr VfTableObject { get; internal set; }
         public string Name { get; internal set; }
         public string Path { get; internal set; }
-        public IntPtr Outer { get; internal set; }
         public UnrealClass Class { get; internal set; }
+        public UnrealClass Super { get; internal set; }
         internal UnrealField[] Fields { get; set; }
 
         internal UnrealClass()
         {
         }
 
-        public bool IsA(UnrealClass uclass)
+        public bool IsA(UnrealClass someBase)
         {
-            if (this.Class == null)
+            var klass = this;
+            do
             {
-                return false;
+                if (klass == someBase)
+                {
+                    return true;
+                }
+                klass = klass.Class;
             }
+            while (klass != null);
+            return false;
+        }
 
-            return this.Class == uclass || this.Class.IsA(uclass) == true;
+        public bool IsChildOf(UnrealClass someBase)
+        {
+            var klass = this;
+            do
+            {
+                if (klass == someBase)
+                {
+                    return true;
+                }
+                klass = klass.Super;
+            }
+            while (klass != null);
+            return false;
+        }
+
+        internal IEnumerable<string> GetFieldNames()
+        {
+            return GetFieldNamesReverse().Reverse();
+        }
+
+        private IEnumerable<string> GetFieldNamesReverse()
+        {
+            var klass = this;
+            do
+            {
+                foreach (var field in klass.Fields.Reverse())
+                {
+                    yield return field.Name;
+                }
+                klass = klass.Super;
+            }
+            while (klass != null);
+        }
+
+        internal UnrealField GetField(string name)
+        {
+            var klass = this;
+            do
+            {
+                var field = klass.Fields.SingleOrDefault(f => f.Name == name);
+                if (field != null)
+                {
+                    return field;
+                }
+                klass = klass.Super;
+            }
+            while (klass != null);
+            return null;
         }
 
         public override string ToString()

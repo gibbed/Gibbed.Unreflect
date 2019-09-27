@@ -37,32 +37,56 @@ namespace Gibbed.Unreflect.Core
         [JsonProperty("Core.Object:Class", Required = Required.Always)]
         public int CoreObjectClass { get; set; }
 
+        [JsonProperty("Core.Struct:SuperStruct", Required = Required.Always)]
+        public int CoreStructSuperStruct { get; set; }
+
         [JsonProperty("Core.Struct:Children", Required = Required.Always)]
         public int CoreStructChildren { get; set; }
-
-        [JsonProperty("Core.Field:ArrayCount", Required = Required.Always)]
-        public int CoreFieldArrayCount { get; set; }
-
-        [JsonProperty("Core.Field:Size", Required = Required.Always)]
-        public int CoreFieldSize { get; set; }
-
-        [JsonProperty("Core.Field:Offset", Required = Required.Always)]
-        public int CoreFieldOffset { get; set; }
 
         [JsonProperty("Core.Field:Next", Required = Required.Always)]
         public int CoreFieldNext { get; set; }
 
+        [JsonProperty("Core.Property:ArrayCount", Required = Required.Always)]
+        public int CorePropertyArrayCount { get; set; }
+
+        [JsonProperty("Core.Property:Size", Required = Required.Always)]
+        public int CorePropertySize { get; set; }
+
+        [JsonProperty("Core.Property:Offset", Required = Required.Always)]
+        public int CorePropertyOffset { get; set; }
+
         [JsonProperty("Core.ArrayProperty:Inner", Required = Required.Always)]
         public int CoreArrayPropertyInner { get; set; }
 
-        [JsonProperty("Core.BoolProperty:BitFlag", Required = Required.Always)]
-        public int CoreBoolPropertyBitFlag { get; set; }
+        [JsonProperty("Core.BoolProperty:FieldSize", Required = Required.Always)]
+        public int CoreBoolPropertyFieldSize { get; set; }
+
+        [JsonProperty("Core.BoolProperty:ByteOffset", Required = Required.Always)]
+        public int CoreBoolPropertyByteOffset { get; set; }
+
+        [JsonProperty("Core.BoolProperty:ByteMask", Required = Required.Always)]
+        public int CoreBoolPropertyByteMask { get; set; }
+
+        [JsonProperty("Core.BoolProperty:FieldMask", Required = Required.Always)]
+        public int CoreBoolPropertyFieldMask { get; set; }
 
         [JsonProperty("Core.ObjectProperty:PropertyClass", Required = Required.Always)]
         public int CoreObjectPropertyPropertyClass { get; set; }
 
         [JsonProperty("Core.StructProperty:Struct", Required = Required.Always)]
         public int CoreStructPropertyStruct { get; set; }
+
+        [JsonProperty("Core.EnumProperty:UnderlyingProperty", Required = Required.Always)]
+        public int CoreEnumPropertyUnderlyingProperty { get; set; }
+
+        [JsonProperty("Core.EnumProperty:Enum", Required = Required.Always)]
+        public int CoreEnumPropertyEnum { get; set; }
+
+        [JsonProperty("Core.Enum:TypeName", Required = Required.Always)]
+        public int CoreEnumTypeName { get; set; }
+
+        [JsonProperty("Core.Enum:ValueNames", Required = Required.Always)]
+        public int CoreEnumValueNames { get; set; }
 
         public object Clone()
         {
@@ -71,15 +95,23 @@ namespace Gibbed.Unreflect.Core
                 CoreObjectOuter = this.CoreObjectOuter,
                 CoreObjectName = this.CoreObjectName,
                 CoreObjectClass = this.CoreObjectClass,
+                CoreStructSuperStruct = this.CoreStructSuperStruct,
                 CoreStructChildren = this.CoreStructChildren,
-                CoreFieldArrayCount = this.CoreFieldArrayCount,
-                CoreFieldSize = this.CoreFieldSize,
-                CoreFieldOffset = this.CoreFieldOffset,
+                CorePropertyArrayCount = this.CorePropertyArrayCount,
+                CorePropertySize = this.CorePropertySize,
+                CorePropertyOffset = this.CorePropertyOffset,
                 CoreFieldNext = this.CoreFieldNext,
                 CoreArrayPropertyInner = this.CoreArrayPropertyInner,
-                CoreBoolPropertyBitFlag = this.CoreBoolPropertyBitFlag,
+                CoreBoolPropertyFieldSize = this.CoreBoolPropertyFieldSize,
+                CoreBoolPropertyByteOffset = this.CoreBoolPropertyByteOffset,
+                CoreBoolPropertyByteMask = this.CoreBoolPropertyByteMask,
+                CoreBoolPropertyFieldMask = this.CoreBoolPropertyFieldMask,
                 CoreObjectPropertyPropertyClass = this.CoreObjectPropertyPropertyClass,
                 CoreStructPropertyStruct = this.CoreStructPropertyStruct,
+                CoreEnumPropertyUnderlyingProperty = this.CoreEnumPropertyUnderlyingProperty,
+                CoreEnumPropertyEnum = this.CoreEnumPropertyEnum,
+                CoreEnumTypeName = this.CoreEnumTypeName,
+                CoreEnumValueNames = this.CoreEnumValueNames,
             };
         }
     }

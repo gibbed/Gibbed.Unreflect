@@ -21,29 +21,32 @@
  */
 
 using System;
-using Newtonsoft.Json;
+using System.Runtime.InteropServices;
 
-namespace Gibbed.Unreflect.Core
+namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class JsonPointerConverter : JsonConverter
+    internal class StringPropertyField : UnrealField
     {
-        public override bool CanConvert(Type objectType)
+        private static readonly int _NativeSize;
+
+        static StringPropertyField()
         {
-            return objectType == typeof(int) || objectType == typeof(long);
+            _NativeSize = Marshal.SizeOf(typeof(UnrealNatives.String));
         }
 
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer)
+        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
         {
-            return new IntPtr((long)reader.Value);
-        }
+            if (this.ArrayCount != 1)
+            {
+                throw new NotSupportedException();
+            }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue(((IntPtr)value).ToInt32());
+            if (this.Size != _NativeSize)
+            {
+                throw new InvalidOperationException($"size mismatch: {this.Size} vs {_NativeSize}");
+            }
+
+            return engine.ReadString(objectAddress + this.Offset);
         }
     }
 }

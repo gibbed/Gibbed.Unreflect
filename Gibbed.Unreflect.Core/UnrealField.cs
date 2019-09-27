@@ -34,12 +34,12 @@ namespace Gibbed.Unreflect.Core
         public int Size { get; internal set; }
         public int ArrayCount { get; internal set; }
 
-        internal virtual object Read(Engine engine, IntPtr objectAddress)
+        internal virtual object ReadInstance(Engine engine, IntPtr objectAddress)
         {
             throw new NotImplementedException();
         }
 
-        internal virtual void Write(Engine engine, IntPtr objectAddress, object value)
+        internal virtual void WriteInstance(Engine engine, IntPtr objectAddress, object value)
         {
             throw new NotImplementedException();
         }
