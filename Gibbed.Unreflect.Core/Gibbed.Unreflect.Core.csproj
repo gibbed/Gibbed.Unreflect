@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net472;net48</TargetFrameworks>
     <Company>Gibbed</Company>
     <Authors>Gibbed</Authors>
     <Description>http://gib.me/</Description>
     <Copyright>Copyright © Gibbed 2019</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gibbed.Unreflect.Runtime\Gibbed.Unreflect.Runtime.csproj" />
