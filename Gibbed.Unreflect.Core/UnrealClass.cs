@@ -34,7 +34,8 @@ namespace Gibbed.Unreflect.Core
         public string Path { get; internal set; }
         public UnrealClass Class { get; internal set; }
         public UnrealClass Super { get; internal set; }
-        internal UnrealField[] Fields { get; set; }
+        public UnrealField[] Fields { get; set; }
+        public IntPtr ClassDefaultObject { get; set; }
 
         internal UnrealClass()
         {

@@ -20,24 +20,12 @@
  *    distribution.
  */
 
-using System;
-
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class Int8PropertyField : PrimitivePropertyField<sbyte>
+    public class DummyProperty : UnrealProperty
     {
-        public Int8PropertyField() : base(1)
+        internal DummyProperty()
         {
-        }
-
-        protected override sbyte ReadPrimitive(Engine engine, IntPtr address)
-        {
-            return engine.Runtime.ReadValueS8(address);
-        }
-
-        protected override void WritePrimitive(Engine engine, IntPtr address, sbyte value)
-        {
-            engine.Runtime.WriteValueS8(address, value);
         }
     }
 }

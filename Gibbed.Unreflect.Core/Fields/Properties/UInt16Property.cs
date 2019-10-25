@@ -21,32 +21,23 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class StringPropertyField : UnrealField
+    public class UInt16Property : PrimitiveProperty<ushort>
     {
-        private static readonly int _NativeSize;
-
-        static StringPropertyField()
+        internal UInt16Property() : base(2)
         {
-            _NativeSize = Marshal.SizeOf(typeof(UnrealNatives.String));
         }
 
-        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
+        protected override ushort ReadPrimitive(Engine engine, IntPtr address)
         {
-            if (this.ArrayCount != 1)
-            {
-                throw new NotSupportedException();
-            }
+            return engine.Runtime.ReadValueU16(address);
+        }
 
-            if (this.Size != _NativeSize)
-            {
-                throw new InvalidOperationException($"size mismatch: {this.Size} vs {_NativeSize}");
-            }
-
-            return engine.ReadString(objectAddress + this.Offset);
+        protected override void WritePrimitive(Engine engine, IntPtr address, ushort value)
+        {
+            engine.Runtime.WriteValueU16(address, value);
         }
     }
 }

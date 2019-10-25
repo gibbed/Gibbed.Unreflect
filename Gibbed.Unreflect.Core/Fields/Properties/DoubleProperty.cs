@@ -24,22 +24,20 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class ClassPropertyField : UnrealField
+    public class DoubleProperty : PrimitiveProperty<double>
     {
-        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
+        internal DoubleProperty() : base(8)
         {
-            var classAddress = engine.ReadPointer(objectAddress + this.Offset);
-            if (classAddress == IntPtr.Zero)
-            {
-                return null;
-            }
+        }
 
-            var klass = engine.GetClass(classAddress);
-            if (klass == null)
-            {
-                throw new InvalidOperationException();
-            }
-            return klass;
+        protected override double ReadPrimitive(Engine engine, IntPtr address)
+        {
+            return engine.Runtime.ReadValueF64(address);
+        }
+
+        protected override void WritePrimitive(Engine engine, IntPtr address, double value)
+        {
+            engine.Runtime.WriteValueF64(address, value);
         }
     }
 }

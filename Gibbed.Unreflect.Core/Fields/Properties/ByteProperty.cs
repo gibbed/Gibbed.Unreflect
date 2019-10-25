@@ -24,20 +24,25 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class UInt64PropertyField : PrimitivePropertyField<ulong>
+    public class ByteProperty : UnrealProperty
     {
-        public UInt64PropertyField() : base(8)
+        internal ByteProperty()
         {
         }
 
-        protected override ulong ReadPrimitive(Engine engine, IntPtr address)
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
         {
-            return engine.Runtime.ReadValueU64(address);
-        }
+            if (this.ArrayCount != 1)
+            {
+                throw new NotSupportedException();
+            }
 
-        protected override void WritePrimitive(Engine engine, IntPtr address, ulong value)
-        {
-            engine.Runtime.WriteValueU64(address, value);
+            if (this.Size != 1)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return engine.Runtime.ReadValueU8(objectAddress + this.Offset);
         }
     }
 }

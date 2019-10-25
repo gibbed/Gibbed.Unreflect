@@ -24,34 +24,51 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class NamePropertyField : UnrealField
+    public class ObjectProperty : UnrealProperty
     {
-        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
+        internal ObjectProperty()
         {
-            if (this.Size != 8)
+        }
+
+        public UnrealClass PropertyClass { get; internal set; }
+
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
+        {
+            if (this.Size != IntPtr.Size)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"size mismatch: {this.Size} vs {IntPtr.Size}");
             }
 
             var fieldAddress = objectAddress + this.Offset;
 
-            if (this.ArrayCount == 0)
-            {
-                throw new InvalidOperationException();
-            }
-
             if (this.ArrayCount == 1)
             {
-                return engine.ReadName(fieldAddress);
+                return this.ReadInternal(engine, fieldAddress);
             }
 
-            var items = new string[this.ArrayCount];
-            for (int o = 0; o < this.ArrayCount; o++)
+            var items = new object[this.ArrayCount];
+            for (int i = 0; i < this.ArrayCount; i++)
             {
-                items[o] = engine.ReadName(fieldAddress);
+                items[i] = this.ReadInternal(engine, fieldAddress);
                 fieldAddress += this.Size;
             }
             return items;
+        }
+
+        private object ReadInternal(Engine engine, IntPtr objectAddress)
+        {
+            var actualObjectAddress = engine.ReadPointer(objectAddress);
+            if (actualObjectAddress == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            var instance = engine.GetObject(actualObjectAddress);
+            if (instance == null)
+            {
+                throw new InvalidOperationException("object not found");
+            }
+            return instance;
         }
     }
 }

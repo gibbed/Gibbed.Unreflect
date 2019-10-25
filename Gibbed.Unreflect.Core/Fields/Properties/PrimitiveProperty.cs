@@ -24,11 +24,11 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal abstract class PrimitivePropertyField<T> : UnrealField
+    public abstract class PrimitiveProperty<T> : UnrealProperty
     {
         private readonly int _PrimitiveSize;
 
-        protected PrimitivePropertyField(int primitiveSize)
+        internal PrimitiveProperty(int primitiveSize)
         {
             this._PrimitiveSize = primitiveSize;
         }
@@ -37,7 +37,7 @@ namespace Gibbed.Unreflect.Core.Fields
 
         protected abstract void WritePrimitive(Engine engine, IntPtr address, T value);
 
-        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
         {
             var fieldAddress = objectAddress + this.Offset;
 
@@ -70,7 +70,7 @@ namespace Gibbed.Unreflect.Core.Fields
             return items;
         }
 
-        internal override void WriteInstance(Engine engine, IntPtr objectAddress, object value)
+        public override void WriteInstance(Engine engine, IntPtr objectAddress, object value)
         {
             if (this.Size != this._PrimitiveSize)
             {

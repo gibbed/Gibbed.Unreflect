@@ -21,12 +21,36 @@
  */
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class EnumPropertyField : UnrealField
+    public class StringProperty : UnrealProperty
     {
-        public UnrealClass UnderlyingProperty { get; internal set; }
-        public UnrealField Enum { get; internal set; }
+        private static readonly int _NativeSize;
+
+        static StringProperty()
+        {
+            _NativeSize = Marshal.SizeOf(typeof(UnrealNatives.String));
+        }
+
+        internal StringProperty()
+        {
+        }
+
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
+        {
+            if (this.ArrayCount != 1)
+            {
+                throw new NotSupportedException();
+            }
+
+            if (this.Size != _NativeSize)
+            {
+                throw new InvalidOperationException($"size mismatch: {this.Size} vs {_NativeSize}");
+            }
+
+            return engine.ReadString(objectAddress + this.Offset);
+        }
     }
 }

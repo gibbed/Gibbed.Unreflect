@@ -20,12 +20,24 @@
  *    distribution.
  */
 
+using System;
+
 namespace Gibbed.Unreflect.Core.Fields
 {
-    public class DummyField : UnrealField
+    public class Int16Property : PrimitiveProperty<short>
     {
-        internal DummyField()
+        internal Int16Property() : base(2)
         {
+        }
+
+        protected override short ReadPrimitive(Engine engine, IntPtr address)
+        {
+            return engine.Runtime.ReadValueS16(address);
+        }
+
+        protected override void WritePrimitive(Engine engine, IntPtr address, short value)
+        {
+            engine.Runtime.WriteValueS16(address, value);
         }
     }
 }

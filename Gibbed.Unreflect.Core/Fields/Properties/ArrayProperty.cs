@@ -25,18 +25,22 @@ using System.Linq;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class ArrayPropertyField : UnrealField
+    public class ArrayProperty : UnrealProperty
     {
+        internal ArrayProperty()
+        {
+        }
+
         public UnrealField Inner { get; internal set; }
 
-        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
         {
             if (this.ArrayCount != 1)
             {
                 throw new NotSupportedException();
             }
 
-            if (this.Inner is BytePropertyField)
+            if (this.Inner is ByteProperty)
             {
                 var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);
                 if (array.Data == IntPtr.Zero)
@@ -47,7 +51,7 @@ namespace Gibbed.Unreflect.Core.Fields
                 return engine.Runtime.ReadBytes(array.Data, array.Count);
             }
 
-            if (this.Inner is IntPropertyField)
+            if (this.Inner is IntProperty)
             {
                 var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);
                 if (array.Data == IntPtr.Zero)
@@ -55,7 +59,7 @@ namespace Gibbed.Unreflect.Core.Fields
                     return new int[0];
                 }
 
-                var intField = (IntPropertyField)this.Inner;
+                var intField = (IntProperty)this.Inner;
                 var bytes = engine.Runtime.ReadBytes(array.Data, array.Count * 4);
 
                 var item = 0;
@@ -68,7 +72,7 @@ namespace Gibbed.Unreflect.Core.Fields
                 return items;
             }
 
-            if (this.Inner is StructPropertyField)
+            if (this.Inner is StructProperty)
             {
                 var array = engine.Runtime.ReadStructure<UnrealNatives.Array>(objectAddress + this.Offset);
                 if (array.Data == IntPtr.Zero)
@@ -76,7 +80,7 @@ namespace Gibbed.Unreflect.Core.Fields
                     return new UnrealObject[0];
                 }
 
-                var structField = (StructPropertyField)this.Inner;
+                var structField = (StructProperty)this.Inner;
 
                 var item = array.Data;
                 var items = new object[array.Count];
@@ -88,7 +92,7 @@ namespace Gibbed.Unreflect.Core.Fields
                 return items;
             }
 
-            if (this.Inner is ObjectPropertyField)
+            if (this.Inner is ObjectProperty)
             {
                 var array = engine.ReadPointerArray(objectAddress + this.Offset);
 
@@ -108,12 +112,12 @@ namespace Gibbed.Unreflect.Core.Fields
                 }).ToArray();
             }
 
-            if (this.Inner is ComponentPropertyField)
+            if (this.Inner is ComponentProperty)
             {
                 return "*** COMPONENT NOT IMPLEMENTED ***";
             }
 
-            if (this.Inner is ClassPropertyField)
+            if (this.Inner is ClassProperty)
             {
                 var array = engine.ReadPointerArray(objectAddress + this.Offset);
 
@@ -133,12 +137,12 @@ namespace Gibbed.Unreflect.Core.Fields
                 }).ToArray();
             }
 
-            if (this.Inner is StringPropertyField)
+            if (this.Inner is StringProperty)
             {
                 return engine.ReadStringArray(objectAddress + this.Offset);
             }
 
-            if (this.Inner is NamePropertyField)
+            if (this.Inner is NameProperty)
             {
                 return engine.ReadNameArray(objectAddress + this.Offset);
             }

@@ -24,7 +24,26 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class ComponentPropertyField : UnrealField
+    public class ClassProperty : UnrealProperty
     {
+        internal ClassProperty()
+        {
+        }
+
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
+        {
+            var classAddress = engine.ReadPointer(objectAddress + this.Offset);
+            if (classAddress == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            var klass = engine.GetClass(classAddress);
+            if (klass == null)
+            {
+                throw new InvalidOperationException();
+            }
+            return klass;
+        }
     }
 }

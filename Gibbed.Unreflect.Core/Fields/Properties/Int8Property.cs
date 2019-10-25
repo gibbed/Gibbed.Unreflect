@@ -24,20 +24,20 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class Int16PropertyField : PrimitivePropertyField<short>
+    public class Int8Property : PrimitiveProperty<sbyte>
     {
-        public Int16PropertyField() : base(2)
+        internal Int8Property() : base(1)
         {
         }
 
-        protected override short ReadPrimitive(Engine engine, IntPtr address)
+        protected override sbyte ReadPrimitive(Engine engine, IntPtr address)
         {
-            return engine.Runtime.ReadValueS16(address);
+            return engine.Runtime.ReadValueS8(address);
         }
 
-        protected override void WritePrimitive(Engine engine, IntPtr address, short value)
+        protected override void WritePrimitive(Engine engine, IntPtr address, sbyte value)
         {
-            engine.Runtime.WriteValueS16(address, value);
+            engine.Runtime.WriteValueS8(address, value);
         }
     }
 }

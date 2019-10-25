@@ -46,6 +46,9 @@ namespace Gibbed.Unreflect.Core
         [JsonProperty("Core.Field:Next", Required = Required.Always)]
         public int CoreFieldNext { get; set; }
 
+        [JsonProperty("Core.Class:ClassDefaultObject", Required = Required.Always)]
+        public int CoreClassClassDefaultObject { get; set; }
+
         [JsonProperty("Core.Property:ArrayCount", Required = Required.Always)]
         public int CorePropertyArrayCount { get; set; }
 
@@ -101,6 +104,7 @@ namespace Gibbed.Unreflect.Core
                 CorePropertySize = this.CorePropertySize,
                 CorePropertyOffset = this.CorePropertyOffset,
                 CoreFieldNext = this.CoreFieldNext,
+                CoreClassClassDefaultObject = this.CoreClassClassDefaultObject,
                 CoreArrayPropertyInner = this.CoreArrayPropertyInner,
                 CoreBoolPropertyFieldSize = this.CoreBoolPropertyFieldSize,
                 CoreBoolPropertyByteOffset = this.CoreBoolPropertyByteOffset,

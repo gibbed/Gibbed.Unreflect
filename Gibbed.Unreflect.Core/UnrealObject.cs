@@ -40,6 +40,11 @@ namespace Gibbed.Unreflect.Core
             return this._Shim.Class != null && this._Shim.Class.IsChildOf(someBase);
         }
 
+        public IntPtr GetAddress()
+        {
+            return this._Shim.Address;
+        }
+
         public string GetName()
         {
             return this._Shim.Name;

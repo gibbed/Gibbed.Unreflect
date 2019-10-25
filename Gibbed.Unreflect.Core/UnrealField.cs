@@ -24,22 +24,19 @@ using System;
 
 namespace Gibbed.Unreflect.Core
 {
-    internal abstract class UnrealField
+    public abstract class UnrealField
     {
         public IntPtr Address { get; internal set; }
         public IntPtr VfTableObject { get; internal set; }
         public string Name { get; internal set; }
         public UnrealClass Class { get; internal set; }
-        public int Offset { get; internal set; }
-        public int Size { get; internal set; }
-        public int ArrayCount { get; internal set; }
 
-        internal virtual object ReadInstance(Engine engine, IntPtr objectAddress)
+        public virtual object ReadInstance(Engine engine, IntPtr objectAddress)
         {
             throw new NotImplementedException();
         }
 
-        internal virtual void WriteInstance(Engine engine, IntPtr objectAddress, object value)
+        public virtual void WriteInstance(Engine engine, IntPtr objectAddress, object value)
         {
             throw new NotImplementedException();
         }

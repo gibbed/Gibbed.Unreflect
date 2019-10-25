@@ -24,20 +24,10 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class DoublePropertyField : PrimitivePropertyField<double>
+    public class ComponentProperty : UnrealProperty
     {
-        public DoublePropertyField() : base(8)
+        internal ComponentProperty()
         {
-        }
-
-        protected override double ReadPrimitive(Engine engine, IntPtr address)
-        {
-            return engine.Runtime.ReadValueF64(address);
-        }
-
-        protected override void WritePrimitive(Engine engine, IntPtr address, double value)
-        {
-            engine.Runtime.WriteValueF64(address, value);
         }
     }
 }

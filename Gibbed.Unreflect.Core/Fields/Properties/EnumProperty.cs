@@ -24,20 +24,13 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class FloatPropertyField : PrimitivePropertyField<float>
+    public class EnumProperty : UnrealProperty
     {
-        public FloatPropertyField() : base(4)
+        internal EnumProperty()
         {
         }
 
-        protected override float ReadPrimitive(Engine engine, IntPtr address)
-        {
-            return engine.Runtime.ReadValueF32(address);
-        }
-
-        protected override void WritePrimitive(Engine engine, IntPtr address, float value)
-        {
-            engine.Runtime.WriteValueF32(address, value);
-        }
+        public UnrealClass UnderlyingProperty { get; internal set; }
+        public UnrealField Enum { get; internal set; }
     }
 }

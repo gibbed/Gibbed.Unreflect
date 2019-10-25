@@ -24,11 +24,15 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class StructPropertyField : UnrealField
+    public class StructProperty : UnrealProperty
     {
+        internal StructProperty()
+        {
+        }
+
         public UnrealClass Structure { get; internal set; }
 
-        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
         {
             var fieldAddress = objectAddress + this.Offset;
 

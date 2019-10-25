@@ -85,7 +85,19 @@ namespace Gibbed.Unreflect.Core
                 */
                 objectAddresses.AddRange(objectTableChunk.Items.Where(it => it.ObjectPointer != IntPtr.Zero).Select(it => it.ObjectPointer));
             }
-            this._ObjectAddresses = objectAddresses.Distinct().ToArray();
+
+            var classDefaultObjectPointers = new List<IntPtr>();
+            foreach (var objectAddress in objectAddresses)
+            {
+                var objectClassPointer = this.ReadPointer(objectAddress + this.Offsets.CoreObjectClass);
+                var classDefaultObjectPointer = this.ReadPointer(objectClassPointer + this.Offsets.CoreClassClassDefaultObject);
+                if (classDefaultObjectPointer != IntPtr.Zero)
+                {
+                    classDefaultObjectPointers.Add(classDefaultObjectPointer);
+                }
+            }
+
+            this._ObjectAddresses = objectAddresses.Concat(classDefaultObjectPointers).Distinct().ToArray();
 
             this._ObjectShims = new Dictionary<IntPtr, UnrealObjectShim>();
             foreach (var objectAddress in this._ObjectAddresses)
@@ -111,7 +123,9 @@ namespace Gibbed.Unreflect.Core
 
         public UnrealObject GetObject(IntPtr address)
         {
-            return this._ObjectShims[address].Object;
+            return this._ObjectShims.TryGetValue(address, out var result) == true
+                ? result.Object
+                : null;
         }
 
         public UnrealObject GetObject(string path)
@@ -255,6 +269,9 @@ namespace Gibbed.Unreflect.Core
             }
             instance.Fields = fields.ToArray();
 
+            var classDefaultObjectAddress = this.ReadPointer(address + this.Offsets.CoreClassClassDefaultObject);
+            instance.ClassDefaultObject = classDefaultObjectAddress;
+
             return instance;
         }
 
@@ -296,14 +313,14 @@ namespace Gibbed.Unreflect.Core
 
                 case "/Script/CoreUObject.ClassProperty":
                 {
-                    instance = new Fields.ClassPropertyField();
+                    instance = new Fields.ClassProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.ObjectProperty":
                 {
-                    var objectField = new Fields.ObjectPropertyField();
+                    var objectField = new Fields.ObjectProperty();
                     instance = objectField;
                     this._CachedFields.Add(address, instance);
                     var propertyClassAddress = this.ReadPointer(address + this.Offsets.CoreObjectPropertyPropertyClass);
@@ -313,7 +330,7 @@ namespace Gibbed.Unreflect.Core
 
                 case "/Script/CoreUObject.StructProperty":
                 {
-                    var structField = new Fields.StructPropertyField();
+                    var structField = new Fields.StructProperty();
                     instance = structField;
                     this._CachedFields.Add(address, instance);
                     var structAddress = this.ReadPointer(address + this.Offsets.CoreStructPropertyStruct);
@@ -323,14 +340,14 @@ namespace Gibbed.Unreflect.Core
 
                 case "/Script/CoreUObject.ComponentProperty":
                 {
-                    instance = new Fields.ComponentPropertyField();
+                    instance = new Fields.ComponentProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.ArrayProperty":
                 {
-                    var arrayField = new Fields.ArrayPropertyField();
+                    var arrayField = new Fields.ArrayProperty();
                     instance = arrayField;
                     this._CachedFields.Add(address, instance);
                     var innerAddress = this.ReadPointer(address + this.Offsets.CoreArrayPropertyInner);
@@ -340,7 +357,7 @@ namespace Gibbed.Unreflect.Core
 
                 case "/Script/CoreUObject.EnumProperty":
                 {
-                    var enumField = new Fields.EnumPropertyField();
+                    var enumField = new Fields.EnumProperty();
                     instance = enumField;
                     this._CachedFields.Add(address, instance);
                     var underlyingPropertyAddress = this.ReadPointer(address + this.Offsets.CoreEnumPropertyUnderlyingProperty);
@@ -352,7 +369,7 @@ namespace Gibbed.Unreflect.Core
 
                 case "/Script/CoreUObject.BoolProperty":
                 {
-                    var boolField = new Fields.BoolPropertyField();
+                    var boolField = new Fields.BoolProperty();
                     instance = boolField;
                     this._CachedFields.Add(address, instance);
                     var fieldSizeAddress = address + this.Offsets.CoreBoolPropertyFieldSize;
@@ -368,90 +385,88 @@ namespace Gibbed.Unreflect.Core
 
                 case "/Script/CoreUObject.ByteProperty":
                 {
-                    instance = new Fields.BytePropertyField();
+                    instance = new Fields.ByteProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.Int8Property":
                 {
-                    instance = new Fields.Int8PropertyField();
+                    instance = new Fields.Int8Property();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.UInt16Property":
                 {
-                    instance = new Fields.UInt16PropertyField();
+                    instance = new Fields.UInt16Property();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.Int16Property":
                 {
-                    instance = new Fields.Int16PropertyField();
+                    instance = new Fields.Int16Property();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.UInt32Property":
                 {
-                    instance = new Fields.UInt32PropertyField();
+                    instance = new Fields.UInt32Property();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.IntProperty":
                 {
-                    instance = new Fields.IntPropertyField();
+                    instance = new Fields.IntProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.UInt64Property":
                 {
-                    instance = new Fields.UInt64PropertyField();
+                    instance = new Fields.UInt64Property();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.Int64Property":
                 {
-                    instance = new Fields.Int64PropertyField();
+                    instance = new Fields.Int64Property();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.FloatProperty":
                 {
-                    instance = new Fields.FloatPropertyField();
+                    instance = new Fields.FloatProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.DoubleProperty":
                 {
-                    instance = new Fields.DoublePropertyField();
+                    instance = new Fields.DoubleProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.StrProperty":
                 {
-                    instance = new Fields.StringPropertyField();
+                    instance = new Fields.StringProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
                 case "/Script/CoreUObject.NameProperty":
                 {
-                    instance = new Fields.NamePropertyField();
+                    instance = new Fields.NameProperty();
                     this._CachedFields.Add(address, instance);
                     break;
                 }
 
-                case "/Script/CoreUObject.DelegateFunction":
-                case "/Script/CoreUObject.Function":
                 case "/Script/CoreUObject.DelegateProperty":
                 case "/Script/CoreUObject.InterfaceProperty":
                 case "/Script/CoreUObject.LazyObjectProperty":
@@ -462,6 +477,14 @@ namespace Gibbed.Unreflect.Core
                 case "/Script/CoreUObject.SoftClassProperty":
                 case "/Script/CoreUObject.SoftObjectProperty":
                 case "/Script/CoreUObject.WeakObjectProperty":
+                {
+                    instance = new Fields.DummyProperty();
+                    this._CachedFields.Add(address, instance);
+                    break;
+                }
+
+                case "/Script/CoreUObject.Function":
+                case "/Script/CoreUObject.DelegateFunction":
                 {
                     instance = new Fields.DummyField();
                     this._CachedFields.Add(address, instance);
@@ -482,9 +505,14 @@ namespace Gibbed.Unreflect.Core
             instance.VfTableObject = this.ReadPointer(address);
             instance.Name = name;
             instance.Class = klass;
-            instance.ArrayCount = this.Runtime.ReadValueS32(arrayCountAddress);
-            instance.Size = this.Runtime.ReadValueS32(sizeAddress);
-            instance.Offset = this.Runtime.ReadValueS32(offsetAddress);
+
+            if (instance is UnrealProperty property)
+            {
+                property.ArrayCount = this.Runtime.ReadValueS32(arrayCountAddress);
+                property.Size = this.Runtime.ReadValueS32(sizeAddress);
+                property.Offset = this.Runtime.ReadValueS32(offsetAddress);
+            }
+
             return instance;
         }
 

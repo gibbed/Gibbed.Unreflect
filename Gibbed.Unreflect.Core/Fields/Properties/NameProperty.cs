@@ -24,47 +24,38 @@ using System;
 
 namespace Gibbed.Unreflect.Core.Fields
 {
-    internal class ObjectPropertyField : UnrealField
+    public class NameProperty : UnrealProperty
     {
-        public UnrealClass PropertyClass { get; internal set; }
-
-        internal override object ReadInstance(Engine engine, IntPtr objectAddress)
+        internal NameProperty()
         {
-            if (this.Size != IntPtr.Size)
+        }
+
+        public override object ReadInstance(Engine engine, IntPtr objectAddress)
+        {
+            if (this.Size != 8)
             {
-                throw new InvalidOperationException($"size mismatch: {this.Size} vs {IntPtr.Size}");
+                throw new InvalidOperationException();
             }
 
             var fieldAddress = objectAddress + this.Offset;
 
-            if (this.ArrayCount == 1)
+            if (this.ArrayCount == 0)
             {
-                return this.ReadInternal(engine, fieldAddress);
+                throw new InvalidOperationException();
             }
 
-            var items = new object[this.ArrayCount];
-            for (int i = 0; i < this.ArrayCount; i++)
+            if (this.ArrayCount == 1)
             {
-                items[i] = this.ReadInternal(engine, fieldAddress);
+                return engine.ReadName(fieldAddress);
+            }
+
+            var items = new string[this.ArrayCount];
+            for (int o = 0; o < this.ArrayCount; o++)
+            {
+                items[o] = engine.ReadName(fieldAddress);
                 fieldAddress += this.Size;
             }
             return items;
-        }
-
-        private object ReadInternal(Engine engine, IntPtr objectAddress)
-        {
-            var actualObjectAddress = engine.ReadPointer(objectAddress);
-            if (actualObjectAddress == IntPtr.Zero)
-            {
-                return (UnrealObject)null;
-            }
-
-            var instance = engine.GetObject(actualObjectAddress);
-            if (instance == null)
-            {
-                throw new InvalidOperationException("object not found");
-            }
-            return instance;
         }
     }
 }
