@@ -7,7 +7,7 @@
     <Copyright>Copyright © Gibbed 2019</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gibbed.Unreflect.Runtime\Gibbed.Unreflect.Runtime.csproj" />
